@@ -165,22 +165,34 @@ The normal touch gestures are:
 
 | Gesture | Action |
 |---|---|
-| Tap upper-right corner | Switch directly between player and station list |
+| Tap upper-right corner | Cycle Player → Stations → Favorites → Player |
 | Hold upper-right corner in station list | Move to the previous page |
 | Hold lower-right corner in station list | Move to the next page |
+| Hold a highlighted station away from the right corners | Add or remove Favorite |
 | Tap in player view | Start or stop playback |
 | Double-tap the highlighted station | Play the selected station |
 | Swipe left or right | Adjust volume |
 | Swipe up or down | Browse stations |
 | Long press | Change between player and station-list views or cancel selection |
 
-The upper-right 96x64-pixel area is a dedicated mode-switch shortcut in this
-Hosyond build. Use it whenever you want to open or close the station list
-without holding the screen.
+The upper-right 96x64-pixel area is a dedicated page-switch shortcut in this
+Hosyond build. Each short tap cycles through the player, full station list,
+Favorites list, and back to the player.
 
 While the station list is open, hold the upper-right corner to move backward
 ten stations or hold the lower-right corner to move forward ten stations.
 These page gestures are useful for navigating long playlists quickly.
+
+### Favorites
+
+In either station list, hold the highlighted station anywhere outside the two
+right-side paging corners to add or remove it from Favorites. Favorite stations
+are marked with `*`. The Favorites page supports normal swiping, ten-station
+paging, and double-tap playback.
+
+Favorites are stored by stream URL in `/data/favorites.txt`, not by station
+number. They survive restarts and remain associated after the playlist is
+reordered. Up to 64 favorite URLs are stored.
 
 In the station list, the centered station is the highlighted selection. The
 first tap leaves the list open; tap the same highlighted station again within

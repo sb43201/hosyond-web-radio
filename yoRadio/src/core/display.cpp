@@ -5,6 +5,7 @@
 #include "config.h"
 #include "display.h"
 #include "player.h"
+#include "favorites.h"
 #include "network.h"
 #include "netserver.h"
 #include "timekeeper.h"
@@ -379,10 +380,15 @@ void Display::_swichMode(displayMode_e newmode) {
   if (newmode == SDCHANGE)  _showDialog(LANG::const_waitForSD);
   if (newmode == INFO || newmode == SETTINGS || newmode == TIMEZONE || newmode == WIFI) _showDialog(LANG::const_DlgNextion);
   if (newmode == NUMBERS) _showDialog("");
-  if (newmode == STATIONS) {
+  if (newmode == STATIONS || newmode == FAVORITES) {
     _pager->setPage( pages[PG_PLAYLIST]);
     _plcurrent->setText("");
-    currentPlItem = config.lastStation();
+    if (newmode == FAVORITES) {
+      currentPlItem = favorites.isFavorite(config.lastStation())
+        ? config.lastStation() : favorites.stationAt(1);
+    } else {
+      currentPlItem = config.lastStation();
+    }
     _drawPlaylist();
   }
   
