@@ -34,6 +34,12 @@
 #ifndef TS_STATION_DOUBLE_TAP_MS
   #define TS_STATION_DOUBLE_TAP_MS  700
 #endif
+#ifndef TS_STATION_PAGE_STEPS
+  #define TS_STATION_PAGE_STEPS 10
+#endif
+#ifndef TS_STATION_PAGE_CORNER_HEIGHT
+  #define TS_STATION_PAGE_CORNER_HEIGHT 64
+#endif
 #ifndef TS_VOLUME_SWIPE_RANGE
   #define TS_VOLUME_SWIPE_RANGE 254
 #endif
@@ -234,7 +240,20 @@ void TouchScreen::loop(){
 #endif
           }
         }else{
-          display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
+          const bool rightCorner =
+            _oldTouchX >= (_width > TS_MODE_SWITCH_WIDTH ? _width - TS_MODE_SWITCH_WIDTH : 0);
+          if(display.mode() == STATIONS && rightCorner &&
+             (_oldTouchY < TS_STATION_PAGE_CORNER_HEIGHT ||
+              _oldTouchY >= _height - TS_STATION_PAGE_CORNER_HEIGHT)) {
+            const bool nextPage = _oldTouchY >= _height - TS_STATION_PAGE_CORNER_HEIGHT;
+            lastStationTap = 0;
+            lastStationTapItem = 0;
+            for(uint8_t step = 0; step < TS_STATION_PAGE_STEPS; ++step) {
+              controlsEvent(nextPage);
+            }
+          } else {
+            display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
+          }
         }
       }
       direct = TSD_STAY;

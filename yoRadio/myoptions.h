@@ -54,6 +54,10 @@
 #define TS_MODE_SWITCH_WIDTH 96
 #define TS_MODE_SWITCH_HEIGHT 64
 
+/* Long-press right-side corners to move ten stations (one visible page). */
+#define TS_STATION_PAGE_STEPS 10
+#define TS_STATION_PAGE_CORNER_HEIGHT 64
+
 /*
  * A station starts only after two taps on the same highlighted item within
  * this interval. This prevents a stray touch from closing the station list.

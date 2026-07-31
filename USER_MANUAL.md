@@ -166,6 +166,8 @@ The normal touch gestures are:
 | Gesture | Action |
 |---|---|
 | Tap upper-right corner | Switch directly between player and station list |
+| Hold upper-right corner in station list | Move to the previous page |
+| Hold lower-right corner in station list | Move to the next page |
 | Tap in player view | Start or stop playback |
 | Double-tap the highlighted station | Play the selected station |
 | Swipe left or right | Adjust volume |
@@ -175,6 +177,10 @@ The normal touch gestures are:
 The upper-right 96x64-pixel area is a dedicated mode-switch shortcut in this
 Hosyond build. Use it whenever you want to open or close the station list
 without holding the screen.
+
+While the station list is open, hold the upper-right corner to move backward
+ten stations or hold the lower-right corner to move forward ten stations.
+These page gestures are useful for navigating long playlists quickly.
 
 In the station list, the centered station is the highlighted selection. The
 first tap leaves the list open; tap the same highlighted station again within
