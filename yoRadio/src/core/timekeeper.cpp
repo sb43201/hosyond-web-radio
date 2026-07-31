@@ -180,7 +180,12 @@ void TimeKeeper::_upClock(){
 #if RTCSUPPORTED
   if(config.isRTCFound()) rtc.getTime(&network.timeinfo);
 #else
-  if(network.timeinfo.tm_year>100 || network.status == SDREADY) {
+  time_t now;
+  time(&now);
+  if (now > 1000000000) {
+    localtime_r(&now, &network.timeinfo);
+  } else if(network.timeinfo.tm_year>100 || network.status == SDREADY) {
+    // Keep the offline fallback running until SNTP supplies system time.
     network.timeinfo.tm_sec++;
     mktime(&network.timeinfo);
   }

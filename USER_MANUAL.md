@@ -249,6 +249,8 @@ This Hosyond build uses NTP and the U.S. Eastern Time rule. It changes
 automatically between EST (UTC-5) and EDT (UTC-4) at 2:00 a.m. on the correct
 March and November Sundays. The numeric UTC-offset field in the web interface
 is ignored by this hardware profile; leave the configured NTP server enabled.
+The displayed minute is refreshed from the ESP32 system clock rather than a
+loop-based counter, preventing accumulated lag during audio or display work.
 
 The web settings include display orientation, touch orientation, inversion,
 brightness, and diagnostic options.
