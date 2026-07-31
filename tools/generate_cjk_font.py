@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate yoRadio's compact 8x8 Chinese playlist font.
+"""Generate yoRadio's compact 12x12 Chinese playlist font.
 
 The input is a yoRadio tab-separated playlist. Only CJK Unified Ideographs
 used by station names are included. Each Unicode character is mapped to one
@@ -32,14 +32,14 @@ def render_glyph(character: str, font: ImageFont.FreeTypeFont, threshold: int) -
     x = (32 - width) // 2 - bounds[0]
     y = (32 - height) // 2 - bounds[1]
     draw.text((x, y), character, fill=255, font=font)
-    canvas = canvas.resize((8, 8), Image.Resampling.LANCZOS)
+    canvas = canvas.resize((12, 12), Image.Resampling.LANCZOS)
     pixels = canvas.load()
     rows = []
-    for y in range(8):
+    for y in range(12):
         row = 0
-        for x in range(8):
+        for x in range(12):
             if pixels[x, y] >= threshold:
-                row |= 0x80 >> x
+                row |= 0x0800 >> x
         rows.append(row)
     return rows
 
@@ -49,7 +49,7 @@ def main() -> None:
     parser.add_argument("playlist", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--font", type=Path, default=Path(r"C:\Windows\Fonts\simsun.ttc"))
-    parser.add_argument("--threshold", type=int, default=75,
+    parser.add_argument("--threshold", type=int, default=50,
                         help="monochrome cutoff from 0 to 255; higher values make strokes thinner")
     args = parser.parse_args()
 
@@ -75,14 +75,14 @@ def main() -> None:
     lines += ["};", "", "const uint8_t cjkEncodedBytes[CJK_GLYPH_COUNT] PROGMEM = {"]
     for offset in range(0, len(codes), 16):
         lines.append("  " + ", ".join(f"0x{code:02X}" for code in codes[offset : offset + 16]) + ",")
-    lines += ["};", "", "const uint8_t cjkGlyphs[CJK_GLYPH_COUNT][8] PROGMEM = {"]
+    lines += ["};", "", "const uint16_t cjkGlyphs[CJK_GLYPH_COUNT][12] PROGMEM = {"]
     for character in characters:
         rows = render_glyph(character, font, args.threshold)
         if not any(rows):
             raise ValueError(
                 f"U+{ord(character):04X} {character!r} became blank; lower --threshold"
             )
-        bitmap = ", ".join(f"0x{row:02X}" for row in rows)
+        bitmap = ", ".join(f"0x{row:03X}" for row in rows)
         lines.append(f"  {{ {bitmap} }}, // U+{ord(character):04X} {character}")
     lines += [
         "};",
