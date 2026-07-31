@@ -55,11 +55,10 @@
 #define TS_MODE_SWITCH_HEIGHT 64
 
 /*
- * A station-list tap must be held for this long before it is accepted. This
- * prevents brief resistive-touch noise and accidental contacts from selecting
- * a station and returning to the player screen.
+ * A station starts only after two taps on the same highlighted item within
+ * this interval. This prevents a stray touch from closing the station list.
  */
-#define TS_STATION_SELECT_MS 250
+#define TS_STATION_DOUBLE_TAP_MS 700
 
 /*
  * Horizontal volume swipes are distance based. A full screen-width movement

@@ -31,8 +31,8 @@
 #ifndef TS_MODE_SWITCH_HEIGHT
   #define TS_MODE_SWITCH_HEIGHT 64
 #endif
-#ifndef TS_STATION_SELECT_MS
-  #define TS_STATION_SELECT_MS  250
+#ifndef TS_STATION_DOUBLE_TAP_MS
+  #define TS_STATION_DOUBLE_TAP_MS  700
 #endif
 #ifndef TS_VOLUME_SWIPE_RANGE
   #define TS_VOLUME_SWIPE_RANGE 254
@@ -119,6 +119,8 @@ void TouchScreen::loop(){
   static uint16_t touchVolOrigin, touchStation;
   static uint8_t touchVolStart, touchVolLast;
   static bool gestureMoved;
+  static uint32_t lastStationTap;
+  static uint16_t lastStationTapItem;
   if (!_checklpdelay(20, _touchdelay)) return;
 #if TS_MODEL==TS_MODEL_GT911
   ts.read();
@@ -147,6 +149,10 @@ void TouchScreen::loop(){
     } else { /*     SWIPE TOUCH     */
       direct = _tsDirection(touchX, touchY);
       if(direct != TDS_REQUEST) gestureMoved = true;
+      if(gestureMoved) {
+        lastStationTap = 0;
+        lastStationTapItem = 0;
+      }
       switch (direct) {
         case TSD_LEFT:
         case TSD_RIGHT: {
@@ -199,11 +205,28 @@ void TouchScreen::loop(){
               _oldTouchY < TS_MODE_SWITCH_HEIGHT &&
               (display.mode() == PLAYER || display.mode() == STATIONS);
             if(modeSwitchTap) {
+              lastStationTap = 0;
+              lastStationTapItem = 0;
               display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
-            } else if(display.mode() == STATIONS && pressTicks < TS_STATION_SELECT_MS) {
-              // Ignore a brief contact in the station list. Selection must be
-              // deliberate so resistive-touch noise cannot close the list.
+            } else if(display.mode() == STATIONS) {
+              const uint32_t now = millis();
+              const bool doubleTap =
+                lastStationTap != 0 &&
+                display.currentPlItem == lastStationTapItem &&
+                now - lastStationTap <= TS_STATION_DOUBLE_TAP_MS;
+              if(doubleTap) {
+                lastStationTap = 0;
+                lastStationTapItem = 0;
+                onBtnClick(EVT_BTNCENTER);
+              } else {
+                // The first tap only confirms which centered station is
+                // highlighted. A second tap on the same item starts playback.
+                lastStationTap = now;
+                lastStationTapItem = display.currentPlItem;
+              }
             } else {
+              lastStationTap = 0;
+              lastStationTapItem = 0;
               onBtnClick(EVT_BTNCENTER);
             }
 #else
