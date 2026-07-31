@@ -342,13 +342,34 @@ bool _getWeather() {
         #endif
         
         Serial.printf("##WEATHER###: description: %s, temp:%.1f C, pressure:%dmmHg, humidity:%d%%, wind: %d\n", desc, tempf, press, hum, (int)(wind_deg/22.5));
-        #ifdef WEATHER_FMT_SHORT
-        sprintf(timekeeper.weatherBuf, weatherFmt, tempf, press, hum);
-        #else
+        #if defined(WEATHER_DUAL_UNITS) && WEATHER_DUAL_UNITS
+          const float tempFahrenheit = tempf * 9.0f / 5.0f + 32.0f;
+          const float feelsFahrenheit = tempfl * 9.0f / 5.0f + 32.0f;
           #if EXT_WEATHER
-            sprintf(timekeeper.weatherBuf, LANG::weatherFmt, desc, tempf, tempfl, press, hum, wind_speed, LANG::wind[(int)(wind_deg/22.5)]);
+            snprintf(
+              timekeeper.weatherBuf,
+              WEATHER_STRING_L,
+              "%s, %.1f\011F / %.1f\011C \007 feels like: %.1f\011F / %.1f\011C \007 pressure: %d mmHg \007 humidity: %d%% \007 wind: %.1f m/s [%s]",
+              desc, tempFahrenheit, tempf, feelsFahrenheit, tempfl, press, hum,
+              wind_speed, LANG::wind[(int)(wind_deg/22.5)]
+            );
           #else
-            sprintf(timekeeper.weatherBuf, LANG::weatherFmt, desc, tempf, press, hum);
+            snprintf(
+              timekeeper.weatherBuf,
+              WEATHER_STRING_L,
+              "%s, %.1f\011F / %.1f\011C \007 pressure: %d mmHg \007 humidity: %d%%",
+              desc, tempFahrenheit, tempf, press, hum
+            );
+          #endif
+        #else
+          #ifdef WEATHER_FMT_SHORT
+            sprintf(timekeeper.weatherBuf, weatherFmt, tempf, press, hum);
+          #else
+            #if EXT_WEATHER
+              sprintf(timekeeper.weatherBuf, LANG::weatherFmt, desc, tempf, tempfl, press, hum, wind_speed, LANG::wind[(int)(wind_deg/22.5)]);
+            #else
+              sprintf(timekeeper.weatherBuf, LANG::weatherFmt, desc, tempf, press, hum);
+            #endif
           #endif
         #endif
         display.putRequest(NEWWEATHER);

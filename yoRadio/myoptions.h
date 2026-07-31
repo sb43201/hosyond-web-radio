@@ -68,6 +68,9 @@
 #define TS_VOLUME_SWIPE_RANGE 254
 #define TS_VOLUME_MIN_CHANGE 2
 
+/* Show OpenWeather current and "feels like" values in Fahrenheit and Celsius. */
+#define WEATHER_DUAL_UNITS true
+
 /*
  * Onboard audio:
  *   GPIO26 -> ESP32 DAC2 -> SC8002B AUDIO_IN

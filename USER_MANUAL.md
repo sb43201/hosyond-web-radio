@@ -257,6 +257,19 @@ If touch positions remain inaccurate:
 5. Rebuild and upload the firmware. The filesystem does not need to be
    re-uploaded for calibration-only changes.
 
+### Weather display
+
+The Hosyond layout pauses the weather ticker for three seconds before scrolling
+at approximately 25 pixels per second. Current temperature and "feels like"
+temperature are shown in both Fahrenheit and Celsius:
+
+```text
+72.5°F / 22.5°C
+```
+
+OpenWeather is queried in metric units; Fahrenheit is calculated locally by
+the radio.
+
 ## 10. Using a microSD card
 
 The onboard microSD slot is enabled. It uses a separate SPI bus from the TFT

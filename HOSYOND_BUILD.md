@@ -90,6 +90,11 @@ The initial raw touch limits are in `yoRadio/myoptions.h`. Enable touch debuggin
 in the yoRadio web settings if a particular panel needs slightly different
 limits. The "Flip touch" and "Flip screen" settings handle reversed orientation.
 
+The custom ST7796 layout in
+`yoRadio/src/displays/conf/displayST7796conf_custom.h` slows the weather ticker
+and pauses it before scrolling. `WEATHER_DUAL_UNITS` in `yoRadio/myoptions.h`
+shows both Fahrenheit and Celsius.
+
 ## Upstream
 
 The application source is maintained by the
