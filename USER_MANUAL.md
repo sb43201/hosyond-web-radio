@@ -194,6 +194,10 @@ Favorites are stored by stream URL in `/data/favorites.txt`, not by station
 number. They survive restarts and remain associated after the playlist is
 reordered. Up to 64 favorite URLs are stored.
 
+The playlist-to-favorite mapping is read once and cached in RAM. Changing to
+the Favorites page does not repeatedly open the playlist files, which keeps
+audio playback uninterrupted.
+
 In the station list, the centered station is the highlighted selection. The
 first tap leaves the list open; tap the same highlighted station again within
 0.7 second to start it. A vertical swipe clears any pending first tap, so

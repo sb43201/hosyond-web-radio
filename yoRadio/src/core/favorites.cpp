@@ -33,8 +33,16 @@ void Favorites::_resolve() {
   if (_resolvedPlaylistLength == playlistLength) return;
   _resolvedPlaylistLength = playlistLength;
   _resolvedCount = 0;
-  for (uint16_t station = 1; station <= playlistLength && _resolvedCount < MAX_FAVORITES; ++station) {
-    const String url = config.stationUrlByNum(station);
+  File playlist = config.SDPLFS()->open(REAL_PLAYL, "r");
+  uint16_t station = 0;
+  while (playlist && playlist.available() && station < playlistLength &&
+         _resolvedCount < MAX_FAVORITES) {
+    ++station;
+    const String line = playlist.readStringUntil('\n');
+    const int firstTab = line.indexOf('\t');
+    const int secondTab = firstTab < 0 ? -1 : line.indexOf('\t', firstTab + 1);
+    if (firstTab < 0) continue;
+    const String url = line.substring(firstTab + 1, secondTab < 0 ? line.length() : secondTab);
     for (uint8_t favorite = 0; favorite < _count; ++favorite) {
       if (_urls[favorite] == url) {
         _stationIds[_resolvedCount++] = station;
@@ -42,15 +50,13 @@ void Favorites::_resolve() {
       }
     }
   }
+  if (playlist) playlist.close();
 }
 
 bool Favorites::isFavorite(uint16_t stationId) {
-  _load();
-  const String url = config.stationUrlByNum(stationId);
-  if (!url.length()) return false;
-  for (uint8_t index = 0; index < _count; ++index) {
-    if (_urls[index] == url) return true;
-  }
+  _resolve();
+  for (uint8_t index = 0; index < _resolvedCount; ++index)
+    if (_stationIds[index] == stationId) return true;
   return false;
 }
 
