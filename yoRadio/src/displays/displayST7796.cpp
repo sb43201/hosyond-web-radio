@@ -42,11 +42,11 @@ size_t DspCore::write(uint8_t c) {
 
   startWrite();
   for (uint8_t row = 0; row < glyphHeight; ++row) {
-    const uint8_t sourceRow = row * 12 / glyphHeight;
-    const uint16_t bits = pgm_read_word(&cjkGlyphs[glyphIndex][sourceRow]);
+    const uint8_t sourceRow = row * 24 / glyphHeight;
+    const uint32_t bits = pgm_read_dword(&cjkGlyphs[glyphIndex][sourceRow]);
     for (uint8_t column = 0; column < glyphWidth; ++column) {
-      const uint8_t sourceColumn = column * 12 / glyphWidth;
-      const bool foreground = bits & (0x0800 >> sourceColumn);
+      const uint8_t sourceColumn = column * 24 / glyphWidth;
+      const bool foreground = bits & (0x00800000 >> sourceColumn);
       if (foreground || textbgcolor != textcolor) {
         writePixel(cursor_x + column, cursor_y + row,
                    foreground ? textcolor : textbgcolor);

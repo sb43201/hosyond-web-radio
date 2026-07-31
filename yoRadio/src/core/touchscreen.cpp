@@ -177,7 +177,7 @@ void TouchScreen::loop(){
               int16_t yDelta = map(abs(touchStation - touchY), 0, _height, 0, TS_STEPS);
               display.putRequest(NEWMODE, STATIONS);
               if (yDelta>1) {
-                controlsEvent((touchStation - touchY)<0);
+                controlsEvent((touchStation - touchY)>0);
                 touchStation = touchY;
               }
             }

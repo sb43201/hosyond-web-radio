@@ -78,7 +78,8 @@ python tools/generate_cjk_font.py playlists/yoRadio_China_Taiwan_playlist.csv yo
 ```
 
 The generator uses Pillow and the lighter Windows SimSun font by default. Its
-default threshold is tuned for visible, thin 12x12 strokes on the Hosyond display; pass
+default threshold is tuned before reducing the 24x24 glyphs to single-pixel
+strokes on the Hosyond display; pass
 `--threshold` with a higher value for still thinner glyphs.
 
 ## First startup

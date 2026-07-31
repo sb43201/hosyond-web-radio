@@ -169,7 +169,7 @@ The normal touch gestures are:
 | Tap in player view | Start or stop playback |
 | Double-tap the highlighted station | Play the selected station |
 | Swipe left or right | Adjust volume |
-| Swipe up or down | Browse stations |
+| Swipe up or down | Move the station list in the same direction as the swipe |
 | Long press | Change between player and station-list views or cancel selection |
 
 The upper-right 96x64-pixel area is a dedicated mode-switch shortcut in this
