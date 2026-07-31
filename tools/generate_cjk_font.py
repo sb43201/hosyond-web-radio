@@ -49,7 +49,7 @@ def main() -> None:
     parser.add_argument("playlist", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--font", type=Path, default=Path(r"C:\Windows\Fonts\simsun.ttc"))
-    parser.add_argument("--threshold", type=int, default=155,
+    parser.add_argument("--threshold", type=int, default=45,
                         help="monochrome cutoff from 0 to 255; higher values make strokes thinner")
     args = parser.parse_args()
 
@@ -77,7 +77,12 @@ def main() -> None:
         lines.append("  " + ", ".join(f"0x{code:02X}" for code in codes[offset : offset + 16]) + ",")
     lines += ["};", "", "const uint8_t cjkGlyphs[CJK_GLYPH_COUNT][8] PROGMEM = {"]
     for character in characters:
-        bitmap = ", ".join(f"0x{row:02X}" for row in render_glyph(character, font, args.threshold))
+        rows = render_glyph(character, font, args.threshold)
+        if not any(rows):
+            raise ValueError(
+                f"U+{ord(character):04X} {character!r} became blank; lower --threshold"
+            )
+        bitmap = ", ".join(f"0x{row:02X}" for row in rows)
         lines.append(f"  {{ {bitmap} }}, // U+{ord(character):04X} {character}")
     lines += [
         "};",
