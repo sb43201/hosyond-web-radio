@@ -354,7 +354,7 @@ bool _getWeather() {
             snprintf(
               timekeeper.weatherBuf,
               WEATHER_STRING_L,
-              "%s, %.1f\011F / %.1f\011C \007 feels like: %.1f\011F / %.1f\011C \007 pressure: %d mmHg \007 humidity: %d%% \007 wind: %.1f m/s [%s]",
+              "%s, %.1f°F / %.1f°C \007 feels like: %.1f°F / %.1f°C \007 pressure: %d mmHg \007 humidity: %d%% \007 wind: %.1f m/s [%s]",
               desc, tempFahrenheit, tempf, feelsFahrenheit, tempfl, press, hum,
               wind_speed, LANG::wind[(int)(wind_deg/22.5)]
             );
@@ -362,7 +362,7 @@ bool _getWeather() {
             snprintf(
               timekeeper.weatherBuf,
               WEATHER_STRING_L,
-              "%s, %.1f\011F / %.1f\011C \007 pressure: %d mmHg \007 humidity: %d%%",
+              "%s, %.1f°F / %.1f°C \007 pressure: %d mmHg \007 humidity: %d%%",
               desc, tempFahrenheit, tempf, press, hum
             );
           #endif

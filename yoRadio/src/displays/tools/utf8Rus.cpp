@@ -42,7 +42,11 @@ char* utf8Rus(const char* str, bool uppercase) {
 #endif
   for (int i = 0; str[i] && outPos < BUFLEN - 1; i++) {
     uint8_t c = (uint8_t)str[i];
-    if (c == 0xD0 && str[i+1]) {
+    if (c == 0xC2 && (uint8_t)str[i+1] == 0xB0) {
+      // UTF-8 degree sign -> CP437 degree glyph used by Adafruit GFX.
+      out[outPos++] = 0xF8;
+      ++i;
+    } else if (c == 0xD0 && str[i+1]) {
       uint8_t n = (uint8_t)str[++i];
       if (n == 0x81) {                  // Ё
       #if defined(DSP_LCD) && !defined(LCD_RUS)
