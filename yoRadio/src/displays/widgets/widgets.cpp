@@ -637,8 +637,10 @@ void ClockWidget::_begin(){
 }
 
 bool ClockWidget::_getTime(){
+  char previous[sizeof(_timebuffer)];
+  strlcpy(previous, _timebuffer, sizeof(previous));
   strftime(_timebuffer, sizeof(_timebuffer), "%H:%M", &network.timeinfo);
-  bool ret = network.timeinfo.tm_sec==0 || _forceflag!=network.timeinfo.tm_year;
+  bool ret = strcmp(previous, _timebuffer) != 0 || _forceflag!=network.timeinfo.tm_year;
   _forceflag = network.timeinfo.tm_year;
   return ret;
 }
