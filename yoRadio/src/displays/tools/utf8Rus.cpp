@@ -55,6 +55,11 @@ char* utf8Rus(const char* str, bool uppercase) {
       i += 2;
     } else
 #endif
+    if (c == 0xC2 && (uint8_t)str[i+1] == 0xB0) {
+      // UTF-8 degree sign -> CP437 degree glyph used by Adafruit GFX.
+      out[outPos++] = 0xF8;
+      ++i;
+    } else
     if (c == 0xD0 && str[i+1]) {
       uint8_t n = (uint8_t)str[++i];
       if (n == 0x81) {                  // Ё

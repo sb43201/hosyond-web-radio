@@ -17,7 +17,9 @@ from PIL import Image, ImageDraw, ImageFont
 def glyph_codes(count: int) -> list[int]:
     # 0x13-0x15 are yoRadio icons. Avoid NUL, BEL and those icon bytes.
     available = [code for code in range(1, 19) if code != 7]
-    available += list(range(0x7F, 0x100))
+    available.append(0x16)
+    # CP437 0xF8 is the degree sign used by the weather ticker.
+    available += [code for code in range(0x7F, 0x100) if code != 0xF8]
     if count > len(available):
         raise ValueError(f"font needs {count} codes; only {len(available)} are available")
     return available[:count]
