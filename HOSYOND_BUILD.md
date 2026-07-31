@@ -81,7 +81,7 @@ page is missing, repeat that step.
 ## Touch operation
 
 - Tap the upper-right corner: switch directly between player and station list.
-- Tap: play/stop or select the highlighted item.
+- Tap: play/stop. In the station list, hold for 0.25 second to select.
 - Swipe left/right: volume.
 - Swipe up/down: station list.
 - Long press: switch between player and station-list screens.

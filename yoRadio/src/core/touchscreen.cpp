@@ -31,6 +31,9 @@
 #ifndef TS_MODE_SWITCH_HEIGHT
   #define TS_MODE_SWITCH_HEIGHT 64
 #endif
+#ifndef TS_STATION_SELECT_MS
+  #define TS_STATION_SELECT_MS  250
+#endif
 
 #if TS_MODEL==TS_MODEL_XPT2046
   #ifdef TS_SPIPINS
@@ -108,6 +111,7 @@ void TouchScreen::loop(){
   static uint32_t touchLongPress;
   static tsDirection_e direct;
   static uint16_t touchVol, touchStation;
+  static bool gestureMoved;
   if (!_checklpdelay(20, _touchdelay)) return;
 #if TS_MODEL==TS_MODEL_GT911
   ts.read();
@@ -129,9 +133,11 @@ void TouchScreen::loop(){
       touchVol = touchX;
       touchStation = touchY;
       direct = TDS_REQUEST;
+      gestureMoved = false;
       touchLongPress=millis();
     } else { /*     SWIPE TOUCH     */
       direct = _tsDirection(touchX, touchY);
+      if(direct != TDS_REQUEST) gestureMoved = true;
       switch (direct) {
         case TSD_LEFT:
         case TSD_RIGHT: {
@@ -171,7 +177,7 @@ void TouchScreen::loop(){
     }
   }else{
     if (wastouched) {/*     END TOUCH     */
-      if (direct == TDS_REQUEST) {
+      if (direct == TDS_REQUEST && !gestureMoved) {
         uint32_t pressTicks = millis()-touchLongPress;
         if( pressTicks < BTN_PRESS_TICKS*2){
           if(pressTicks > 50) {
@@ -182,6 +188,9 @@ void TouchScreen::loop(){
               (display.mode() == PLAYER || display.mode() == STATIONS);
             if(modeSwitchTap) {
               display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
+            } else if(display.mode() == STATIONS && pressTicks < TS_STATION_SELECT_MS) {
+              // Ignore a brief contact in the station list. Selection must be
+              // deliberate so resistive-touch noise cannot close the list.
             } else {
               onBtnClick(EVT_BTNCENTER);
             }

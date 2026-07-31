@@ -55,6 +55,13 @@
 #define TS_MODE_SWITCH_HEIGHT 64
 
 /*
+ * A station-list tap must be held for this long before it is accepted. This
+ * prevents brief resistive-touch noise and accidental contacts from selecting
+ * a station and returning to the player screen.
+ */
+#define TS_STATION_SELECT_MS 250
+
+/*
  * Onboard audio:
  *   GPIO26 -> ESP32 DAC2 -> SC8002B AUDIO_IN
  *   GPIO4  -> SC8002B shutdown (LOW enabled, HIGH muted)
