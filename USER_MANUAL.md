@@ -196,10 +196,12 @@ Because the E32R35T uses a resistive touchscreen:
 
 ### Importing the China/Taiwan playlist
 
-This project includes `playlists/yoRadio_China_Taiwan_playlist.csv`. In the
+The recommended import file is `playlists/yoRadio_playlist.csv`. It combines
+77 China/Taiwan stations and 53 U.S. stations for a total of 130. In the
 yoRadio web interface, open the playlist editor and use its import function to
-upload that file. It contains 77 stations and is already in yoRadio's
-tab-separated `name`, `stream URL`, and `enabled` format.
+upload that file. It is already in yoRadio's tab-separated `name`, `stream
+URL`, and `enabled` format. The original regional source lists remain in the
+same folder.
 
 The Hosyond firmware contains a compact Chinese font generated from this
 playlist. Its Simplified and Traditional Chinese station names display on the
