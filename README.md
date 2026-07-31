@@ -116,6 +116,8 @@ bus.
 |---|---|
 | `platformio.ini` | Reproducible PlatformIO build environment |
 | `yoRadio/myoptions.h` | Hosyond display, touch, audio, and SD configuration |
+| `playlists/yoRadio_playlist.csv` | Combined China/Taiwan and U.S. station list |
+| `tools/merge_playlists.py` | Merges playlists and removes duplicate stream URLs |
 | `yoRadio/src/` | yoRadio application source |
 | `yoRadio/data/` | Web interface uploaded to SPIFFS |
 | `USER_MANUAL.md` | Installation and operating instructions |

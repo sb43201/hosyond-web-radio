@@ -194,6 +194,16 @@ Because the E32R35T uses a resistive touchscreen:
 
 ## 7. Adding and managing stations
 
+### Importing the combined playlist
+
+The recommended import file is `playlists/yoRadio_playlist.csv`. It combines
+77 China/Taiwan stations and 53 U.S. stations for a total of 130. In the
+yoRadio web interface, open the playlist editor and use its import function to
+upload that file. It is already in yoRadio's tab-separated `name`, `stream
+URL`, and `enabled` format. This main-branch firmware does not include the
+optional Chinese display font; use the Chinese-support branch if those station
+names must be rendered on the radio screen.
+
 1. Open the radio's IP address in a browser.
 2. Open the playlist or station editor.
 3. Add a station name and its direct stream URL.
