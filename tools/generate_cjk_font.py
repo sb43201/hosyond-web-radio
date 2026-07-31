@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate yoRadio's compact 6x8 Chinese playlist font.
+"""Generate yoRadio's compact 8x8 Chinese playlist font.
 
 The input is a yoRadio tab-separated playlist. Only CJK Unified Ideographs
 used by station names are included. Each Unicode character is mapped to one
@@ -32,12 +32,12 @@ def render_glyph(character: str, font: ImageFont.FreeTypeFont, threshold: int) -
     x = (32 - width) // 2 - bounds[0]
     y = (32 - height) // 2 - bounds[1]
     draw.text((x, y), character, fill=255, font=font)
-    canvas = canvas.resize((6, 8), Image.Resampling.LANCZOS)
+    canvas = canvas.resize((8, 8), Image.Resampling.LANCZOS)
     pixels = canvas.load()
     rows = []
     for y in range(8):
         row = 0
-        for x in range(6):
+        for x in range(8):
             if pixels[x, y] >= threshold:
                 row |= 0x80 >> x
         rows.append(row)
@@ -49,7 +49,7 @@ def main() -> None:
     parser.add_argument("playlist", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--font", type=Path, default=Path(r"C:\Windows\Fonts\simsun.ttc"))
-    parser.add_argument("--threshold", type=int, default=45,
+    parser.add_argument("--threshold", type=int, default=75,
                         help="monochrome cutoff from 0 to 255; higher values make strokes thinner")
     args = parser.parse_args()
 

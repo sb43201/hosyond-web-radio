@@ -120,3 +120,16 @@ char* utf8Rus(const char* str, bool uppercase) {
   return out;
 }
 
+uint8_t displayEncodedCharWidth(uint8_t encoded, uint8_t textsize) {
+#if CJK_SUBSET_FONT
+  if (cjkIndexForEncodedByte(encoded) >= 0) return 8 * textsize;
+#endif
+  return 6 * textsize;
+}
+
+uint16_t displayEncodedTextWidth(const char* text, uint8_t textsize) {
+  uint16_t width = 0;
+  while (*text) width += displayEncodedCharWidth((uint8_t)*text++, textsize);
+  return width;
+}
+

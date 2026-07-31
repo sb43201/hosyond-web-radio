@@ -60,7 +60,7 @@ void TextWidget::init(WidgetConfig wconf, uint16_t buffsize, bool uppercase, uin
 
 void TextWidget::setText(const char* txt) {
   strlcpy(_text, utf8Rus(txt, _uppercase), _buffsize);
-  _textwidth = strlen(_text) * _charWidth;
+  _textwidth = displayEncodedTextWidth(_text, _config.textsize);
   if (strcmp(_oldtext, _text) == 0) return;
   if (_active) dsp.fillRect(_oldleft == 0 ? _realLeft() : min(_oldleft, _realLeft()),  _config.top, max(_oldtextwidth, _textwidth), _textheight, _bgcolor);
   _oldtextwidth = _textwidth;
@@ -122,7 +122,7 @@ void ScrollWidget::init(const char* separator, ScrollConfig conf, uint16_t fgcol
   _scrolldelta = conf.scrolldelta;
   _scrolltime = conf.scrolltime;
   _charSize(_config.textsize, _charWidth, _textheight);
-  _sepwidth = strlen(_sep) * _charWidth;
+  _sepwidth = displayEncodedTextWidth(_sep, _config.textsize);
   _width = conf.width;
   _backMove.width = _width;
   _window = (char *) malloc(sizeof(char) * (MAX_WIDTH / _charWidth + 1));
@@ -155,7 +155,7 @@ bool ScrollWidget::_checkIsScrollNeeded() {
 void ScrollWidget::setText(const char* txt) {
   strlcpy(_text, utf8Rus(txt, _uppercase), _buffsize - 1);
   if (strcmp(_oldtext, _text) == 0) return;
-  _textwidth = strlen(_text) * _charWidth;
+  _textwidth = displayEncodedTextWidth(_text, _config.textsize);
   _x = _fb->ready()?0:_config.left;
   _doscroll = _checkIsScrollNeeded();
   if (dsp.getScrollId() == this) dsp.setScrollId(NULL);
@@ -232,28 +232,43 @@ void ScrollWidget::_draw() {
   if (_doscroll) {
     uint16_t fbl = _fb->ready()?0:_config.left;
     uint16_t _newx = fbl - _x;
-    const char* _cursor = _text + _newx / _charWidth;
-    uint16_t hiddenChars = _cursor - _text;
+    const char* _cursor = _text;
+    uint16_t hiddenWidth = 0;
+    while (*_cursor) {
+      const uint8_t charWidth = displayEncodedCharWidth((uint8_t)*_cursor, _config.textsize);
+      if (hiddenWidth + charWidth > _newx) break;
+      hiddenWidth += charWidth;
+      ++_cursor;
+    }
     uint8_t addChars = _fb->ready()?2:1;
-    if (hiddenChars < strlen(_text)) {
+    if (*_cursor) {
     //TODO
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wformat-truncation="
       snprintf(_window, _width / _charWidth + addChars, "%s%s%s", _cursor, _sep, _text);
     #pragma GCC diagnostic pop
     } else {
-      const char* _scursor = _sep + (_cursor - (_text + strlen(_text)));
+      const char* _scursor = _sep;
+      uint16_t separatorWidth = 0;
+      const uint16_t separatorOffset = _newx - _textwidth;
+      while (*_scursor) {
+        const uint8_t charWidth = displayEncodedCharWidth((uint8_t)*_scursor, _config.textsize);
+        if (separatorWidth + charWidth > separatorOffset) break;
+        separatorWidth += charWidth;
+        ++_scursor;
+      }
+      hiddenWidth = _textwidth + separatorWidth;
       snprintf(_window, _width / _charWidth + addChars, "%s%s", _scursor, _text);
     }
     if(_fb->ready()){
     #ifdef PSFBUFFER
       _fb->fillRect(0, 0, _width, _textheight, _bgcolor);
-      _fb->setCursor(_x + hiddenChars * _charWidth, 0);
+      _fb->setCursor(_x + hiddenWidth, 0);
       _fb->print(_window);
       _fb->display();
     #endif
     } else {
-      dsp.setCursor(_x + hiddenChars * _charWidth, _config.top);
+      dsp.setCursor(_x + hiddenWidth, _config.top);
       dsp.setClipping({_config.left, _config.top, _width, _textheight});
       dsp.print(_window);
       #ifndef DSP_LCD
