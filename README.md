@@ -29,6 +29,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Responsive distance-based horizontal volume control
 - Browser-based setup and control
 - Editable and importable station playlists
+- Automatic NTP time synchronization with EST/EDT daylight-saving changes
 - Wi-Fi setup access point for first startup
 - Station name, stream title, bitrate, clock, and signal display
 - Optional FAT32 microSD playback

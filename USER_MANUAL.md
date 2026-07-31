@@ -233,6 +233,13 @@ If sound is distorted:
 
 ## 9. Display and touch settings
 
+### Time synchronization and daylight saving
+
+This Hosyond build uses NTP and the U.S. Eastern Time rule. It changes
+automatically between EST (UTC-5) and EDT (UTC-4) at 2:00 a.m. on the correct
+March and November Sundays. The numeric UTC-offset field in the web interface
+is ignored by this hardware profile; leave the configured NTP server enabled.
+
 The web settings include display orientation, touch orientation, inversion,
 brightness, and diagnostic options.
 
