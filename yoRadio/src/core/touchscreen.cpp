@@ -6,6 +6,7 @@
 #include "controls.h"
 #include "display.h"
 #include "player.h"
+#include "favorites.h"
 
 #ifndef TS_X_MIN
   #define TS_X_MIN              400
@@ -179,7 +180,7 @@ void TouchScreen::loop(){
         case TSD_UP:
         case TSD_DOWN: {
             touchLongPress=millis();
-            if(display.mode()==PLAYER || display.mode()==STATIONS){
+            if(display.mode()==PLAYER || display.mode()==STATIONS || display.mode()==FAVORITES){
               int16_t yDelta = map(abs(touchStation - touchY), 0, _height, 0, TS_STEPS);
               display.putRequest(NEWMODE, STATIONS);
               if (yDelta>1) {
@@ -209,18 +210,20 @@ void TouchScreen::loop(){
             const bool modeSwitchTap =
               _oldTouchX >= (_width > TS_MODE_SWITCH_WIDTH ? _width - TS_MODE_SWITCH_WIDTH : 0) &&
               _oldTouchY < TS_MODE_SWITCH_HEIGHT &&
-              (display.mode() == PLAYER || display.mode() == STATIONS);
+              (display.mode() == PLAYER || display.mode() == STATIONS || display.mode() == FAVORITES);
             if(modeSwitchTap) {
               lastStationTap = 0;
               lastStationTapItem = 0;
-              display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
-            } else if(display.mode() == STATIONS) {
+              const displayMode_e nextMode = display.mode() == PLAYER ? STATIONS
+                : (display.mode() == STATIONS ? FAVORITES : PLAYER);
+              display.putRequest(NEWMODE, nextMode);
+            } else if(display.mode() == STATIONS || display.mode() == FAVORITES) {
               const uint32_t now = millis();
               const bool doubleTap =
                 lastStationTap != 0 &&
                 display.currentPlItem == lastStationTapItem &&
                 now - lastStationTap <= TS_STATION_DOUBLE_TAP_MS;
-              if(doubleTap) {
+              if(doubleTap && display.currentPlItem > 0) {
                 lastStationTap = 0;
                 lastStationTapItem = 0;
                 onBtnClick(EVT_BTNCENTER);
@@ -242,7 +245,7 @@ void TouchScreen::loop(){
         }else{
           const bool rightCorner =
             _oldTouchX >= (_width > TS_MODE_SWITCH_WIDTH ? _width - TS_MODE_SWITCH_WIDTH : 0);
-          if(display.mode() == STATIONS && rightCorner &&
+          if((display.mode() == STATIONS || display.mode() == FAVORITES) && rightCorner &&
              (_oldTouchY < TS_STATION_PAGE_CORNER_HEIGHT ||
               _oldTouchY >= _height - TS_STATION_PAGE_CORNER_HEIGHT)) {
             const bool nextPage = _oldTouchY >= _height - TS_STATION_PAGE_CORNER_HEIGHT;
@@ -251,6 +254,15 @@ void TouchScreen::loop(){
             for(uint8_t step = 0; step < TS_STATION_PAGE_STEPS; ++step) {
               controlsEvent(nextPage);
             }
+          } else if(display.mode() == STATIONS || display.mode() == FAVORITES) {
+            const bool wasFavoritesPage = display.mode() == FAVORITES;
+            if(display.currentPlItem > 0) favorites.toggle(display.currentPlItem);
+            lastStationTap = 0;
+            lastStationTapItem = 0;
+            if(wasFavoritesPage) {
+              display.currentPlItem = favorites.stationAt(1);
+            }
+            display.putRequest(DRAWPLAYLIST, display.currentPlItem);
           } else {
             display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
           }

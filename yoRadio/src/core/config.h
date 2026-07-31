@@ -225,6 +225,7 @@ class Config {
       else saveValue(&store.lastSdStation, newstation);
     }
     char * stationByNum(uint16_t num);
+    String stationUrlByNum(uint16_t num);
     void setTimezone(int8_t tzh, int8_t tzm);
     void setTimezoneOffset(uint16_t tzo);
     uint16_t getTimezoneOffset();

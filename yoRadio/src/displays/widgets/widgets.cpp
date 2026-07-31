@@ -6,6 +6,8 @@
 #include "../../core/player.h"    //  for VU widget
 #include "../../core/network.h"   //  for Clock widget
 #include "../../core/config.h"
+#include "../../core/favorites.h"
+#include "../../core/display.h"
 #include "../tools/l10n.h"
 #include "../tools/psframebuffer.h"
 
@@ -910,6 +912,21 @@ void PlayListWidget::init(ScrollWidget* current){
 }
 
 uint8_t PlayListWidget::_fillPlMenu(int from, uint8_t count) {
+  if (display.mode() == FAVORITES) {
+    uint8_t filled = 0;
+    const uint16_t total = favorites.count();
+    for (uint8_t item = 0; item < count; ++item) {
+      const int position = from + item;
+      if (position < 1 || position > total) _printPLitem(item, "");
+      else {
+        const uint16_t stationId = favorites.stationAt(position);
+        String stationName = String("* ") + config.stationByNum(stationId);
+        _printPLitem(item, stationName.c_str());
+      }
+      ++filled;
+    }
+    return filled;
+  }
   int     ls      = from;
   uint8_t c       = 0;
   bool    finded  = false;
@@ -939,6 +956,7 @@ uint8_t PlayListWidget::_fillPlMenu(int from, uint8_t count) {
       String stationName = playlist.readStringUntil('\n');
       stationName = stationName.substring(0, stationName.indexOf('\t'));
       if(config.store.numplaylist && stationName.length()>0) stationName = String(from+c)+" "+stationName;
+      if(stationName.length()>0 && favorites.isFavorite(from+c)) stationName = String("* ") + stationName;
       _printPLitem(c, stationName.c_str());
       c++;
       if (c >= count) break;
@@ -950,7 +968,9 @@ uint8_t PlayListWidget::_fillPlMenu(int from, uint8_t count) {
 }
 #ifndef DSP_LCD
 void PlayListWidget::drawPlaylist(uint16_t currentItem) {
-  uint8_t lastPos = _fillPlMenu(currentItem - _plCurrentPos, _plTtemsCount);
+  const uint16_t listPosition = display.mode() == FAVORITES
+    ? favorites.positionOf(currentItem) : currentItem;
+  uint8_t lastPos = _fillPlMenu(listPosition - _plCurrentPos, _plTtemsCount);
   if(lastPos<_plTtemsCount){
     dsp.fillRect(0, lastPos*_plItemHeight+_plYStart, dsp.width(), dsp.height()/2, config.theme.background);
   }

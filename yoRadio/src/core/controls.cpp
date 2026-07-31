@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "options.h"
 #include "controls.h"
+#include "favorites.h"
 #include "config.h"
 #include "player.h"
 #include "display.h"
@@ -453,7 +454,7 @@ void controlsEvent(bool toRight, int8_t volDelta) {
     display.numOfNextStation = 0;
     display.putRequest(NEWMODE, PLAYER);
   }
-  if (display.mode() != STATIONS) {
+  if (display.mode() != STATIONS && display.mode() != FAVORITES) {
     #if !defined(DUMMYDISPLAY) || defined(USE_NEXTION)
       display.putRequest(NEWMODE, VOL);
     #endif
@@ -474,6 +475,11 @@ void controlsEvent(bool toRight, int8_t volDelta) {
     if (p > cs) p = 1;
     display.currentPlItem = p;
     display.putRequest(DRAWPLAYLIST, p);
+  }
+  if (display.mode() == FAVORITES) {
+    display.resetQueue();
+    display.currentPlItem = favorites.nextStation(display.currentPlItem, toRight);
+    display.putRequest(DRAWPLAYLIST, display.currentPlItem);
   }
 }
 
@@ -503,7 +509,7 @@ void onBtnClick(int id) {
             delay(200);
           #endif
         }
-        if (display.mode() == STATIONS) {
+        if (display.mode() == STATIONS || display.mode() == FAVORITES) {
           display.putRequest(NEWMODE, PLAYER);
           #ifdef DSP_LCD
             delay(200);
@@ -542,7 +548,7 @@ void onBtnClick(int id) {
               display.putRequest(NEWMODE, STATIONS);
             }
           }
-          if (display.mode() == STATIONS) {
+          if (display.mode() == STATIONS || display.mode() == FAVORITES) {
             controlsEvent(id == EVT_BTNDOWN);
           }
         }

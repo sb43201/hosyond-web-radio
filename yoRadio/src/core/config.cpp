@@ -919,6 +919,23 @@ void Config::setTimeConf(){
 #endif
 }
 
+String Config::stationUrlByNum(uint16_t num){
+  if (num < 1 || num > playlistLength()) return String();
+  File playlist = SDPLFS()->open(REAL_PLAYL, "r");
+  File index = SDPLFS()->open(REAL_INDEX, "r");
+  index.seek((num - 1) * 4, SeekSet);
+  uint32_t pos;
+  index.readBytes((char *) &pos, 4);
+  index.close();
+  playlist.seek(pos, SeekSet);
+  String line = playlist.readStringUntil('\n');
+  playlist.close();
+  const int firstTab = line.indexOf('\t');
+  if (firstTab < 0) return String();
+  const int secondTab = line.indexOf('\t', firstTab + 1);
+  return line.substring(firstTab + 1, secondTab < 0 ? line.length() : secondTab);
+}
+
 bool Config::initNetwork() {
   File file = SPIFFS.open(SSIDS_PATH, "r");
   if (!file || file.isDirectory()) {
