@@ -2,6 +2,9 @@
 #include "../../core/options.h"
 #include "../dspcore.h"
 #include "utf8Rus.h"
+#if CJK_SUBSET_FONT
+  #include "../fonts/chinese_playlist_font.h"
+#endif
 
 size_t strlen_utf8(const char* s) {
   size_t count = 0;
@@ -42,6 +45,16 @@ char* utf8Rus(const char* str, bool uppercase) {
 #endif
   for (int i = 0; str[i] && outPos < BUFLEN - 1; i++) {
     uint8_t c = (uint8_t)str[i];
+#if CJK_SUBSET_FONT
+    if ((c & 0xF0) == 0xE0 && str[i+1] && str[i+2]) {
+      const uint8_t c1 = (uint8_t)str[i+1];
+      const uint8_t c2 = (uint8_t)str[i+2];
+      const uint16_t codepoint = ((c & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
+      const uint8_t encoded = cjkEncodeCodepoint(codepoint);
+      out[outPos++] = encoded == 0 ? '?' : encoded;
+      i += 2;
+    } else
+#endif
     if (c == 0xD0 && str[i+1]) {
       uint8_t n = (uint8_t)str[++i];
       if (n == 0x81) {                  // Ё

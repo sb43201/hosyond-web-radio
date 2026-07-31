@@ -194,6 +194,18 @@ Because the E32R35T uses a resistive touchscreen:
 
 ## 7. Adding and managing stations
 
+### Importing the China/Taiwan playlist
+
+This project includes `playlists/yoRadio_China_Taiwan_playlist.csv`. In the
+yoRadio web interface, open the playlist editor and use its import function to
+upload that file. It contains 77 stations and is already in yoRadio's
+tab-separated `name`, `stream URL`, and `enabled` format.
+
+The Hosyond firmware contains a compact Chinese font generated from this
+playlist. Its Simplified and Traditional Chinese station names display on the
+radio screen. Characters outside this bundled subset appear as `?`; regenerate
+the subset after adding station names that use additional Chinese characters.
+
 1. Open the radio's IP address in a browser.
 2. Open the playlist or station editor.
 3. Add a station name and its direct stream URL.

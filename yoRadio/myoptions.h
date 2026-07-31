@@ -70,6 +70,9 @@
 /* Show OpenWeather current and "feels like" values in Fahrenheit and Celsius. */
 #define WEATHER_DUAL_UNITS true
 
+/* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
+#define CJK_SUBSET_FONT true
+
 /*
  * Onboard audio:
  *   GPIO26 -> ESP32 DAC2 -> SC8002B AUDIO_IN

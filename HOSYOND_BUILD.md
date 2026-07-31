@@ -67,6 +67,18 @@ Open the serial monitor at 115200 baud:
 pio device monitor -e hosyond_e32r35t
 ```
 
+## Regenerate the Chinese playlist font
+
+The committed font contains only the characters used by the bundled
+China/Taiwan playlist. After editing its Chinese station names, regenerate the
+font before building:
+
+```text
+python tools/generate_cjk_font.py playlists/yoRadio_China_Taiwan_playlist.csv yoRadio/src/displays/fonts/chinese_playlist_font.h
+```
+
+The generator uses Pillow and the Windows SimHei font by default.
+
 ## First startup
 
 1. Power the radio and wait for the setup access point to appear.
@@ -81,7 +93,7 @@ page is missing, repeat that step.
 ## Touch operation
 
 - Tap the upper-right corner: switch directly between player and station list.
-- Tap: play/stop. In the station list, hold for 0.25 second to select.
+- Tap in player view: play/stop. Double-tap the highlighted station to select.
 - Swipe left/right: responsive distance-based volume control.
 - Swipe up/down: station list.
 - Long press: switch between player and station-list screens.

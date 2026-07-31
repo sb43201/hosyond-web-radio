@@ -63,6 +63,10 @@ class DspCore: public yoDisplay {
     void setScrollId(void * scrollid) { _scrollid = scrollid; }
     void * getScrollId() { return _scrollid; }
     uint16_t textWidth(const char *txt);
+    #if CJK_SUBSET_FONT
+      using yoDisplay::write;
+      size_t write(uint8_t c) override;
+    #endif
     #if !defined(DSP_LCD)
       inline void writePixel(int16_t x, int16_t y, uint16_t color) {
         if(_clipping){

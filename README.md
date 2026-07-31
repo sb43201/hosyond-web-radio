@@ -29,6 +29,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Responsive distance-based horizontal volume control
 - Browser-based setup and control
 - Editable and importable station playlists
+- Compact Chinese font support for the bundled China/Taiwan station playlist
 - Wi-Fi setup access point for first startup
 - Station name, stream title, bitrate, clock, and signal display
 - Optional FAT32 microSD playback
@@ -115,6 +116,8 @@ bus.
 |---|---|
 | `platformio.ini` | Reproducible PlatformIO build environment |
 | `yoRadio/myoptions.h` | Hosyond display, touch, audio, and SD configuration |
+| `playlists/yoRadio_China_Taiwan_playlist.csv` | Importable China/Taiwan station list |
+| `tools/generate_cjk_font.py` | Regenerates the compact Chinese glyph subset |
 | `yoRadio/src/` | yoRadio application source |
 | `yoRadio/data/` | Web interface uploaded to SPIFFS |
 | `USER_MANUAL.md` | Installation and operating instructions |
