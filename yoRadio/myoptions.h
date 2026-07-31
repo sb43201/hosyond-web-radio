@@ -62,6 +62,13 @@
 #define TS_STATION_SELECT_MS 250
 
 /*
+ * Horizontal volume swipes are distance based. A full screen-width movement
+ * changes the 0-254 yoRadio volume scale by this amount.
+ */
+#define TS_VOLUME_SWIPE_RANGE 254
+#define TS_VOLUME_MIN_CHANGE 2
+
+/*
  * Onboard audio:
  *   GPIO26 -> ESP32 DAC2 -> SC8002B AUDIO_IN
  *   GPIO4  -> SC8002B shutdown (LOW enabled, HIGH muted)

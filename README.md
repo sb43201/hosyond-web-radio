@@ -26,6 +26,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Touchscreen station selection, volume, play, and stop
 - One-tap upper-right shortcut between player and station-list views
 - Deliberate station confirmation with accidental-touch and swipe protection
+- Responsive distance-based horizontal volume control
 - Browser-based setup and control
 - Editable and importable station playlists
 - Wi-Fi setup access point for first startup

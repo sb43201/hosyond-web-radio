@@ -181,6 +181,11 @@ selected station for approximately one quarter of a second to play it. Once a
 vertical swipe is detected, releasing the screen will not accidentally select
 the highlighted station.
 
+Volume follows horizontal finger travel directly: right increases volume and
+left decreases it. Approximately half the screen width changes the volume by
+half of its full range. You can lift and swipe again when a larger adjustment
+is needed.
+
 Because the E32R35T uses a resistive touchscreen:
 
 - Use a deliberate, light press.

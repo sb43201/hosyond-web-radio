@@ -82,7 +82,7 @@ page is missing, repeat that step.
 
 - Tap the upper-right corner: switch directly between player and station list.
 - Tap: play/stop. In the station list, hold for 0.25 second to select.
-- Swipe left/right: volume.
+- Swipe left/right: responsive distance-based volume control.
 - Swipe up/down: station list.
 - Long press: switch between player and station-list screens.
 

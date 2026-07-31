@@ -34,6 +34,12 @@
 #ifndef TS_STATION_SELECT_MS
   #define TS_STATION_SELECT_MS  250
 #endif
+#ifndef TS_VOLUME_SWIPE_RANGE
+  #define TS_VOLUME_SWIPE_RANGE 254
+#endif
+#ifndef TS_VOLUME_MIN_CHANGE
+  #define TS_VOLUME_MIN_CHANGE  2
+#endif
 
 #if TS_MODEL==TS_MODEL_XPT2046
   #ifdef TS_SPIPINS
@@ -110,7 +116,8 @@ void TouchScreen::loop(){
   static bool wastouched = true;
   static uint32_t touchLongPress;
   static tsDirection_e direct;
-  static uint16_t touchVol, touchStation;
+  static uint16_t touchVolOrigin, touchStation;
+  static uint8_t touchVolStart, touchVolLast;
   static bool gestureMoved;
   if (!_checklpdelay(20, _touchdelay)) return;
 #if TS_MODEL==TS_MODEL_GT911
@@ -130,7 +137,9 @@ void TouchScreen::loop(){
   if (!wastouched) { /*     START TOUCH     */
       _oldTouchX = touchX;
       _oldTouchY = touchY;
-      touchVol = touchX;
+      touchVolOrigin = touchX;
+      touchVolStart = config.store.volume;
+      touchVolLast = touchVolStart;
       touchStation = touchY;
       direct = TDS_REQUEST;
       gestureMoved = false;
@@ -143,11 +152,14 @@ void TouchScreen::loop(){
         case TSD_RIGHT: {
             touchLongPress=millis();
             if(display.mode()==PLAYER || display.mode()==VOL){
-              int16_t xDelta = map(abs(touchVol - touchX), 0, _width, 0, TS_STEPS);
               display.putRequest(NEWMODE, VOL);
-              if (xDelta>1) {
-                controlsEvent((touchVol - touchX)<0);
-                touchVol = touchX;
+              const int32_t travel = static_cast<int32_t>(touchX) - touchVolOrigin;
+              int32_t targetVolume = static_cast<int32_t>(touchVolStart) +
+                travel * TS_VOLUME_SWIPE_RANGE / _width;
+              targetVolume = constrain(targetVolume, 0, 254);
+              if(abs(targetVolume - touchVolLast) >= TS_VOLUME_MIN_CHANGE) {
+                touchVolLast = static_cast<uint8_t>(targetVolume);
+                player.setVol(touchVolLast);
               }
             }
             break;
