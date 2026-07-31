@@ -46,6 +46,15 @@
 #define TS_Y_MAX 3850
 
 /*
+ * Hosyond usability shortcut: a tap in the upper-right corner switches
+ * directly between the player and station-list screens. Normal taps elsewhere
+ * retain yoRadio's play/stop and station-select behavior.
+ */
+#define TS_MODE_SWITCH_CORNER true
+#define TS_MODE_SWITCH_WIDTH 96
+#define TS_MODE_SWITCH_HEIGHT 64
+
+/*
  * Onboard audio:
  *   GPIO26 -> ESP32 DAC2 -> SC8002B AUDIO_IN
  *   GPIO4  -> SC8002B shutdown (LOW enabled, HIGH muted)
@@ -72,4 +81,3 @@
 #define LED_BUILTIN 255
 
 #endif
-

@@ -24,6 +24,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 
 - MP3 and AAC internet-radio playback
 - Touchscreen station selection, volume, play, and stop
+- One-tap upper-right shortcut between player and station-list views
 - Browser-based setup and control
 - Editable and importable station playlists
 - Wi-Fi setup access point for first startup

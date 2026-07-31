@@ -22,6 +22,15 @@
 #ifndef TS_STEPS
   #define TS_STEPS              40
 #endif
+#ifndef TS_MODE_SWITCH_CORNER
+  #define TS_MODE_SWITCH_CORNER false
+#endif
+#ifndef TS_MODE_SWITCH_WIDTH
+  #define TS_MODE_SWITCH_WIDTH  96
+#endif
+#ifndef TS_MODE_SWITCH_HEIGHT
+  #define TS_MODE_SWITCH_HEIGHT 64
+#endif
 
 #if TS_MODEL==TS_MODEL_XPT2046
   #ifdef TS_SPIPINS
@@ -165,7 +174,21 @@ void TouchScreen::loop(){
       if (direct == TDS_REQUEST) {
         uint32_t pressTicks = millis()-touchLongPress;
         if( pressTicks < BTN_PRESS_TICKS*2){
-          if(pressTicks > 50) onBtnClick(EVT_BTNCENTER);
+          if(pressTicks > 50) {
+#if TS_MODE_SWITCH_CORNER
+            const bool modeSwitchTap =
+              _oldTouchX >= (_width > TS_MODE_SWITCH_WIDTH ? _width - TS_MODE_SWITCH_WIDTH : 0) &&
+              _oldTouchY < TS_MODE_SWITCH_HEIGHT &&
+              (display.mode() == PLAYER || display.mode() == STATIONS);
+            if(modeSwitchTap) {
+              display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
+            } else {
+              onBtnClick(EVT_BTNCENTER);
+            }
+#else
+            onBtnClick(EVT_BTNCENTER);
+#endif
+          }
         }else{
           display.putRequest(NEWMODE, display.mode() == PLAYER ? STATIONS : PLAYER);
         }

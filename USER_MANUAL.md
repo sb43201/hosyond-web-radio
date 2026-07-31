@@ -165,11 +165,16 @@ The normal touch gestures are:
 
 | Gesture | Action |
 |---|---|
+| Tap upper-right corner | Switch directly between player and station list |
 | Tap in player view | Start or stop playback |
 | Tap in station list | Play the selected station |
 | Swipe left or right | Adjust volume |
 | Swipe up or down | Browse stations |
 | Long press | Change between player and station-list views or cancel selection |
+
+The upper-right 96x64-pixel area is a dedicated mode-switch shortcut in this
+Hosyond build. Use it whenever you want to open or close the station list
+without holding the screen.
 
 Because the E32R35T uses a resistive touchscreen:
 
@@ -405,4 +410,3 @@ in `platformio.ini`.
 
 The software is provided under the GNU General Public License v3.0. See
 `LICENSE`.
-
