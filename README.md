@@ -30,6 +30,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Browser-based setup and control
 - Editable and importable station playlists
 - Compact Chinese font support for the bundled China/Taiwan station playlist
+- Automatic NTP time synchronization with EST/EDT daylight-saving changes
 - Wi-Fi setup access point for first startup
 - Station name, stream title, bitrate, clock, and signal display
 - Optional FAT32 microSD playback

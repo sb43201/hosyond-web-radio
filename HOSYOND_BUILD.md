@@ -82,6 +82,13 @@ default threshold is tuned before reducing the 24x24 glyphs to single-pixel
 strokes on the Hosyond display; pass
 `--threshold` with a higher value for still thinner glyphs.
 
+## Eastern Time and daylight saving
+
+`yoRadio/myoptions.h` defines the POSIX Eastern Time rule used by ESP32 SNTP.
+The clock synchronizes from the configured NTP servers and changes
+automatically between EST (UTC-5) and EDT (UTC-4). The web interface's numeric
+timezone offset does not override this build-specific rule.
+
 ## First startup
 
 1. Power the radio and wait for the setup access point to appear.

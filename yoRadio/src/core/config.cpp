@@ -426,17 +426,10 @@ void Config::setScreensaverPlayingBlank(bool val){
 #endif
 }
 void Config::setSntpOne(const char *val){
-  bool tzdone = false;
-  if (strlen(val) > 0 && strlen(store.sntp2) > 0) {
-    configTime(store.tzHour * 3600 + store.tzMin * 60, getTimezoneOffset(), val, store.sntp2);
-    tzdone = true;
-  } else if (strlen(val) > 0) {
-    configTime(store.tzHour * 3600 + store.tzMin * 60, getTimezoneOffset(), val);
-    tzdone = true;
-  }
-  if (tzdone) {
-    timekeeper.forceTimeSync = true;
+  if (strlen(val) > 0) {
     saveValue(config.store.sntp1, val, 35);
+    setTimeConf();
+    timekeeper.forceTimeSync = true;
   }
 }
 void Config::setShowweather(bool val){
@@ -512,7 +505,7 @@ void Config::resetSystem(const char *val, uint8_t clientId){
     saveValue(store.sntp2, "0.ru.pool.ntp.org", 35);
     saveValue(&store.timeSyncInterval, (uint16_t)60);
     saveValue(&store.timeSyncIntervalRTC, (uint16_t)24);
-    configTime(store.tzHour * 3600 + store.tzMin * 60, getTimezoneOffset(), store.sntp1, store.sntp2);
+    setTimeConf();
     timekeeper.forceTimeSync = true;
     netserver.requestOnChange(GETTIMEZONE, clientId);
     return;
@@ -617,6 +610,8 @@ void Config::setDefaults() {
 void Config::setTimezone(int8_t tzh, int8_t tzm) {
   saveValue(&store.tzHour, tzh, false);
   saveValue(&store.tzMin, tzm);
+  setTimeConf();
+  timekeeper.forceTimeSync = true;
 }
 
 void Config::setTimezoneOffset(uint16_t tzo) {
@@ -909,11 +904,19 @@ bool Config::saveWifi() {
 }
 
 void Config::setTimeConf(){
+#ifdef TIMEZONE_TZ_RULE
+  if(strlen(store.sntp1)>0 && strlen(store.sntp2)>0){
+    configTzTime(TIMEZONE_TZ_RULE, store.sntp1, store.sntp2);
+  }else if(strlen(store.sntp1)>0){
+    configTzTime(TIMEZONE_TZ_RULE, store.sntp1);
+  }
+#else
   if(strlen(store.sntp1)>0 && strlen(store.sntp2)>0){
     configTime(store.tzHour * 3600 + store.tzMin * 60, getTimezoneOffset(), store.sntp1, store.sntp2);
   }else if(strlen(store.sntp1)>0){
     configTime(store.tzHour * 3600 + store.tzMin * 60, getTimezoneOffset(), store.sntp1);
   }
+#endif
 }
 
 bool Config::initNetwork() {

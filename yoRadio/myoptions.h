@@ -70,6 +70,9 @@
 /* Show OpenWeather current and "feels like" values in Fahrenheit and Celsius. */
 #define WEATHER_DUAL_UNITS true
 
+/* U.S. Eastern Time: EST (UTC-5), automatically changing to EDT (UTC-4). */
+#define TIMEZONE_TZ_RULE "EST5EDT,M3.2.0/2,M11.1.0/2"
+
 /* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
 #define CJK_SUBSET_FONT true
 
