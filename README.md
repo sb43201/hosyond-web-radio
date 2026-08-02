@@ -47,6 +47,7 @@ unnecessary digital switching on the unused channel.
 - Current IP address included at the start of the weather ticker
 - Over-the-air firmware updates after initial USB installation
 - Maximum 19.5 dBm ESP32 Wi-Fi transmit power with modem sleep disabled
+- Persistent Wi-Fi reconnection with extended saved-network startup grace
 
 ## Required hardware
 

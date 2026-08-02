@@ -23,6 +23,12 @@ can reduce battery runtime. The displayed `WiFi 0-4` value measures signal
 received from the router, so it may not increase even when transmissions from
 the radio become more reliable.
 
+If Wi-Fi drops while playing, the radio now retries the saved network every
+four seconds until it reconnects and then resumes the interrupted station. At
+startup it retries saved networks for roughly one minute before opening setup
+AP mode. The serial monitor prints the ESP32 disconnect reason number if the
+problem needs further diagnosis.
+
 The board already contains a mono SC8002B speaker amplifier. Audio leaves the
 ESP32 through its internal DAC on GPIO26, so an external MAX98357A or other
 I2S amplifier is not needed.

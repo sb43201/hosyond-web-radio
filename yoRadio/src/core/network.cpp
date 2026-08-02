@@ -20,6 +20,17 @@
   #define SEARCH_WIFI_CORE_ID  0
 #endif
 MyNetwork network;
+TaskHandle_t wifiReconnectTaskHandle = nullptr;
+
+void retryWiFiConnection(void *parameter) {
+  (void)parameter;
+  while (WiFi.status() != WL_CONNECTED) {
+    WiFi.reconnect();
+    vTaskDelay(pdMS_TO_TICKS(WIFI_RECONNECT_INTERVAL_MS));
+  }
+  wifiReconnectTaskHandle = nullptr;
+  vTaskDelete(nullptr);
+}
 
 void MyNetwork::WiFiReconnected(WiFiEvent_t event, WiFiEventInfo_t info){
   network.beginReconnect = false;
@@ -31,7 +42,10 @@ void MyNetwork::WiFiReconnected(WiFiEvent_t event, WiFiEventInfo_t info){
     display.putRequest(NEWIP, 0);
   }else{
     display.putRequest(NEWMODE, PLAYER);
-    if (network.lostPlaying) player.sendCommand({PR_PLAY, config.lastStation()});
+    if (network.lostPlaying) {
+      network.lostPlaying = false;
+      player.sendCommand({PR_PLAY, config.lastStation()});
+    }
   }
   #ifdef MQTT_ROOT_TOPIC
     connectToMqtt();
@@ -39,6 +53,7 @@ void MyNetwork::WiFiReconnected(WiFiEvent_t event, WiFiEventInfo_t info){
 }
 
 void MyNetwork::WiFiLostConnection(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.printf("WiFi disconnected, reason %u\n", info.wifi_sta_disconnected.reason);
   if(!network.beginReconnect){
     Serial.printf("Lost connection, reconnecting to %s...\n", config.ssids[config.store.lastSSID-1].ssid);
     if(config.getMode()==PM_SDCARD) {
@@ -51,13 +66,16 @@ void MyNetwork::WiFiLostConnection(WiFiEvent_t event, WiFiEventInfo_t info){
     }
   }
   network.beginReconnect = true;
-  WiFi.reconnect();
+  if (wifiReconnectTaskHandle == nullptr) {
+    xTaskCreatePinnedToCore(retryWiFiConnection, "wifiRetry", 3072, nullptr, 1,
+                            &wifiReconnectTaskHandle, SEARCH_WIFI_CORE_ID);
+  }
 }
 
 bool MyNetwork::wifiBegin(bool silent){
   uint8_t ls = (config.store.lastSSID == 0 || config.store.lastSSID > config.ssidsCount) ? 0 : config.store.lastSSID - 1;
-  uint8_t startedls = ls;
   uint8_t errcnt = 0;
+  uint16_t failedNetworks = 0;
   //WiFi.mode(WIFI_STA);
   while (true) {
     if(!silent){
@@ -81,12 +99,14 @@ bool MyNetwork::wifiBegin(bool silent){
         errcnt = 0;
         ls++;
         if (ls > config.ssidsCount - 1) ls = 0;
+        failedNetworks++;
         if(!silent) Serial.println();
         WiFi.mode(WIFI_OFF);
         break;
       }
     }
-    if (WiFi.status() != WL_CONNECTED && ls == startedls) {
+    if (WiFi.status() != WL_CONNECTED &&
+        failedNetworks >= static_cast<uint16_t>(config.ssidsCount) * WIFI_STARTUP_CYCLES) {
       return false; break;
     }
     if (WiFi.status() == WL_CONNECTED) {
@@ -156,6 +176,7 @@ void MyNetwork::begin() {
 
 void MyNetwork::setWifiParams(){
   WiFi.setSleep(false);
+  WiFi.setAutoReconnect(true);
   #ifdef WIFI_TX_POWER
     WiFi.setTxPower(WIFI_TX_POWER);
   #endif
