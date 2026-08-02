@@ -36,6 +36,12 @@ class Player: public Audio {
     void _play(uint16_t stationId);
     void _loadVol(uint8_t volume);
     bool _hasError;
+    bool _outputRequested;
+    bool _ampMuted;
+    uint8_t _resumeFrames;
+    uint32_t _lastAudioFrameMs;
+    void _writeAmpMute(bool muted);
+    void _serviceOutputMute();
   public:
     bool lockOutput = true;
     bool resumeAfterUrl = false;
@@ -67,6 +73,7 @@ class Player: public Audio {
     uint8_t volToI2S(uint8_t volume);
     void stopInfo();
     void setOutputPins(bool isPlaying);
+    void audioFrameDecoded();
     void setResumeFilePos(uint32_t pos) { _resumeFilePos = pos; }
 };
 

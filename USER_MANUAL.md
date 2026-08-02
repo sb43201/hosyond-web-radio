@@ -6,6 +6,11 @@ This firmware turns the Hosyond/LCDWiki E32R35T into a standalone Wi-Fi
 internet radio. The touchscreen controls playback and the built-in web
 interface manages Wi-Fi, stations, sound, display settings, and updates.
 
+During an internet-stream interruption, the firmware automatically shuts down
+the onboard amplifier after a short PCM gap. It turns the amplifier back on
+only after several valid audio frames have arrived, reducing reconnect and
+buffer-underrun pops.
+
 The board already contains a mono SC8002B speaker amplifier. Audio leaves the
 ESP32 through its internal DAC on GPIO26, so an external MAX98357A or other
 I2S amplifier is not needed.

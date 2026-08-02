@@ -41,13 +41,20 @@ void Player::init() {
   playerQueue=NULL;
   _resumeFilePos = 0;
   _hasError=false;
+  _outputRequested = false;
+  _ampMuted = true;
+  _resumeFrames = 0;
+  _lastAudioFrameMs = 0;
   playerQueue = xQueueCreate( 5, sizeof( playerRequestParams_t ) );
+  if(MUTE_PIN!=255) {
+    pinMode(MUTE_PIN, OUTPUT);
+    digitalWrite(MUTE_PIN, MUTE_VAL);
+  }
   setOutputPins(false);
   delay(50);
 #ifdef MQTT_ROOT_TOPIC
   memset(burl, 0, MQTT_BURL_SIZE);
 #endif
-  if(MUTE_PIN!=255) pinMode(MUTE_PIN, OUTPUT);
   #if I2S_DOUT!=255
     #if !I2S_INTERNAL
       setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
@@ -192,6 +199,7 @@ void Player::loop() {
     }
   }
   Audio::loop();
+  _serviceOutputMute();
   if(!isRunning() && _status==PLAYING) _stop(true);
   if(_volTimer){
     if((millis()-_volTicks)>3000){
@@ -209,8 +217,42 @@ void Player::loop() {
 
 void Player::setOutputPins(bool isPlaying) {
   if(REAL_LEDBUILTIN!=255) digitalWrite(REAL_LEDBUILTIN, LED_INVERT?!isPlaying:isPlaying);
-  bool _ml = MUTE_LOCK?!MUTE_VAL:(isPlaying?!MUTE_VAL:MUTE_VAL);
-  if(MUTE_PIN!=255) digitalWrite(MUTE_PIN, _ml);
+  _outputRequested = isPlaying;
+  _resumeFrames = 0;
+  _lastAudioFrameMs = millis();
+
+  // Web streams are unmuted only after decoded PCM has refilled the DAC/I2S
+  // path. Local files retain the original immediate behavior.
+  if (!isPlaying || config.getMode() == PM_WEB) _writeAmpMute(true);
+  else _writeAmpMute(false);
+}
+
+void Player::_writeAmpMute(bool muted) {
+  _ampMuted = muted;
+  const bool pinLevel = MUTE_LOCK ? !MUTE_VAL : (muted ? MUTE_VAL : !MUTE_VAL);
+  if(MUTE_PIN!=255) digitalWrite(MUTE_PIN, pinLevel);
+}
+
+void Player::audioFrameDecoded() {
+  _lastAudioFrameMs = millis();
+  if (_resumeFrames < AUDIO_POP_UNMUTE_FRAMES) ++_resumeFrames;
+}
+
+void Player::_serviceOutputMute() {
+  if (!_outputRequested || config.getMode() != PM_WEB) return;
+  const uint32_t now = millis();
+
+  if (!_ampMuted && now - _lastAudioFrameMs >= AUDIO_POP_MUTE_DELAY_MS) {
+    _writeAmpMute(true);
+    _resumeFrames = 0;
+    return;
+  }
+
+  if (_ampMuted && _resumeFrames >= AUDIO_POP_UNMUTE_FRAMES &&
+      now - _lastAudioFrameMs < AUDIO_POP_MUTE_DELAY_MS) {
+    _writeAmpMute(false);
+    _resumeFrames = 0;
+  }
 }
 
 void Player::_play(uint16_t stationId) {

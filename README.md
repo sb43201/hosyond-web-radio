@@ -23,6 +23,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 ## Features
 
 - MP3 and AAC internet-radio playback
+- Frame-aware amplifier muting to reduce pops during slow or interrupted streams
 - Touchscreen station selection, volume, play, and stop
 - One-tap upper-right shortcut between player and station-list views
 - Double-tap station confirmation with accidental-touch and swipe protection

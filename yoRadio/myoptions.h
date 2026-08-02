@@ -102,6 +102,8 @@
 #define I2S_DOUT 26
 #define MUTE_PIN 4
 #define MUTE_VAL HIGH
+#define AUDIO_POP_MUTE_DELAY_MS 120
+#define AUDIO_POP_UNMUTE_FRAMES 5
 #define PLAYER_FORCE_MONO true
 #define VS1053_CS 255
 

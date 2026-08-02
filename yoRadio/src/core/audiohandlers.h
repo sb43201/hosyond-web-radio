@@ -5,6 +5,13 @@
 //              Audio handlers                 //
 //=============================================//
 
+void audio_process_extern(int16_t *buffer, uint16_t length, bool *continueI2S) {
+  (void)buffer;
+  (void)length;
+  player.audioFrameDecoded();
+  *continueI2S = true;
+}
+
 void audio_info(const char *info) {
   if(player.lockOutput) return;
   if(config.store.audioinfo) telnet.printf("##AUDIO.INFO#: %s\n", info);
