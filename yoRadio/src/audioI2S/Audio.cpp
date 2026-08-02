@@ -3108,18 +3108,22 @@ void Audio::processWebStream() {
     const uint16_t  maxFrameSize = InBuff.getMaxBlockSize();    // every mp3/aac frame is not bigger
     static bool     f_tmr_1s;
     static bool     f_stream;                                   // first audio data received
+    static bool     f_rebuffering;                              // pause decoding while a safety cushion is rebuilt
     static uint8_t  cnt_slow;
     static uint32_t chunkSize;                                  // chunkcount read from stream
     static uint32_t tmr_1s;                                     // timer 1 sec
     static uint32_t loopCnt;                                    // count loops if clientbuffer is empty
+    static uint32_t lowBufferSince;
 
     // first call, set some values to default  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if(m_f_firstCall) { // runs only ont time per connection, prepare for start
         m_f_firstCall = false;
         f_stream = false;
+        f_rebuffering = true;
         cnt_slow = 0;
         chunkSize = 0;
         loopCnt = 0;
+        lowBufferSince = 0;
         tmr_1s = millis();
         m_metacount = m_metaint;
         readMetadata(0, true); // reset all static vars
@@ -3168,13 +3172,39 @@ void Audio::processWebStream() {
             if(m_f_chunked)             chunkSize    -= bytesAddedToBuffer;
             InBuff.bytesWritten(bytesAddedToBuffer);
         }
+    }
 
-        if(InBuff.bufferFilled() > maxFrameSize && !f_stream) {  // waiting for buffer filled
-            f_stream = true;  // ready to play the audio data
+    // A one-frame start cushion is too small for variable-rate Internet radio.
+    // Hold playback until roughly three frames (or half this board's buffer) are
+    // available. After a genuine underrun, pause decoding briefly and rebuild
+    // the same cushion instead of consuming every packet as soon as it arrives.
+    const uint32_t bufferCapacity = InBuff.bufferFilled() + InBuff.writeSpace();
+    const uint32_t prebufferTarget = min((uint32_t)maxFrameSize * 3U, bufferCapacity / 2U);
+
+    if(f_stream && !f_rebuffering && InBuff.bufferFilled() < maxFrameSize) {
+        if(!lowBufferSince) lowBufferSince = millis();
+        if(millis() - lowBufferSince >= 150) {
+            f_rebuffering = true;
+            lowBufferSince = 0;
+            AUDIO_INFO("audio buffer underrun, rebuilding cushion");
+        }
+    }
+    else if(InBuff.bufferFilled() >= maxFrameSize) {
+        lowBufferSince = 0;
+    }
+
+    if(f_rebuffering && InBuff.bufferFilled() >= prebufferTarget) {
+        f_rebuffering = false;
+        if(!f_stream) {
+            f_stream = true;
             AUDIO_INFO("stream ready");
         }
-        if(!f_stream) return;
+        else {
+            AUDIO_INFO("audio buffer recovered");
+        }
     }
+
+    if(!f_stream || f_rebuffering) return;
 
     // play audio data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if(f_stream){
