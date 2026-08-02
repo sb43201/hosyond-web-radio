@@ -31,7 +31,10 @@ QueueHandle_t playerQueue;
   #if !I2S_INTERNAL
     Player::Player() {}
   #else
-    Player::Player(): Audio(true, I2S_DAC_CHANNEL_BOTH_EN)  {}
+    #ifndef I2S_INTERNAL_DAC_CHANNEL
+      #define I2S_INTERNAL_DAC_CHANNEL I2S_DAC_CHANNEL_BOTH_EN
+    #endif
+    Player::Player(): Audio(true, I2S_INTERNAL_DAC_CHANNEL)  {}
   #endif
 #endif
 

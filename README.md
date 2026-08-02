@@ -17,6 +17,9 @@ No external I2S amplifier is required. The ESP32 internal DAC on GPIO26 feeds
 the onboard SC8002B amplifier. Connect a passive speaker to the board's
 `SPEAKER` socket.
 
+The Hosyond profile enables only DAC2/GPIO26; DAC1/GPIO25 is disabled to avoid
+unnecessary digital switching on the unused channel.
+
 > **Speaker safety:** the speaker socket is a bridge output. Connect the speaker
 > only between `SP+` and `SP-`. Do not connect either speaker terminal to GND.
 

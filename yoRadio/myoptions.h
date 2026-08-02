@@ -103,6 +103,7 @@
  * I2S_INTERNAL enabled, no external BCLK/LRC/DOUT wiring is used.
  */
 #define I2S_INTERNAL true
+#define I2S_INTERNAL_DAC_CHANNEL I2S_DAC_CHANNEL_LEFT_EN
 #define I2S_DOUT 26
 #define MUTE_PIN 4
 #define MUTE_VAL HIGH

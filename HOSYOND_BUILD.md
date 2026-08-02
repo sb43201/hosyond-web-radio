@@ -20,6 +20,10 @@ No external MAX98357A is required. The E32R35T contains an SC8002B mono
 amplifier. The ESP32 internal DAC on GPIO26 feeds the amplifier, and GPIO4
 enables it while audio is playing.
 
+Only the ESP32 DAC2 channel on GPIO26 is enabled. GPIO25/DAC1 remains disabled
+because it is not connected to the amplifier and needless switching can couple
+noise into the board.
+
 Connect the speaker to the board connector marked `SPEAKER`. Its two contacts
 are the bridge outputs `SP+` and `SP-`. Do not connect either speaker wire to
 ground.
