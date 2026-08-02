@@ -74,6 +74,7 @@ class Display {
     void _layoutChange(bool played);
     void _setRSSI(int rssi);
     void _setBattery();
+    void _setWeatherText(const char *weather);
 };
 
 #else

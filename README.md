@@ -41,6 +41,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Optional FAT32 microSD playback
 - Backlight brightness control
 - Slow, readable weather ticker with simultaneous °F and °C temperatures
+- Current IP address included at the start of the weather ticker
 - Over-the-air firmware updates after initial USB installation
 
 ## Required hardware

@@ -306,7 +306,7 @@ void Display::_start() {
   if(_heapbar)  _heapbar->lock(!config.store.audioinfo);
   
   if(_weather)  _weather->lock(!config.store.showweather);
-  if(_weather && config.store.showweather)  _weather->setText(LANG::const_getWeather);
+  if(_weather && config.store.showweather) _setWeatherText(LANG::const_getWeather);
 
   if(_vuwidget) _vuwidget->lock();
   if(_rssi)     _setRSSI(WiFi.RSSI());
@@ -509,12 +509,13 @@ void Display::loop() {
             if(_volip) _volip->setText(config.ipToStr(WiFi.localIP()), iptxtFmt);
             #endif
           }else{
-            if(_weather) _weather->setText(LANG::const_getWeather);
+            _setWeatherText(timekeeper.weatherBuf && timekeeper.weatherBuf[0]
+                              ? timekeeper.weatherBuf : LANG::const_getWeather);
           }
           break;
         }
         case NEWWEATHER: {
-          if(_weather && timekeeper.weatherBuf) _weather->setText(timekeeper.weatherBuf);
+          if(_weather && timekeeper.weatherBuf) _setWeatherText(timekeeper.weatherBuf);
           break;
         }
         case BOOTSTRING: {
@@ -543,6 +544,9 @@ void Display::loop() {
         case PSTOP:  _layoutChange(false);  break;
         case DSP_START: _start();  break;
         case NEWIP: {
+          if (_weather && config.store.showweather)
+            _setWeatherText(timekeeper.weatherBuf && timekeeper.weatherBuf[0]
+                              ? timekeeper.weatherBuf : LANG::const_getWeather);
           #ifndef HIDE_IP
             if(_volip) _volip->setText(config.ipToStr(WiFi.localIP()), iptxtFmt);
           #endif
@@ -599,6 +603,13 @@ void Display::_setBattery() {
   battery.format(text, sizeof(text));
   _battery->setText(text);
 #endif
+}
+
+void Display::_setWeatherText(const char *weather) {
+  if (!_weather || !weather) return;
+  char text[254];
+  snprintf(text, sizeof(text), "IP %s | %s", config.ipToStr(WiFi.localIP()), weather);
+  _weather->setText(text);
 }
 
 void Display::_station() {
