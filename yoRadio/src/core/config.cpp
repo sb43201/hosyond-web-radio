@@ -86,6 +86,14 @@ void Config::init() {
   }
   if(store.version>CONFIG_VERSION) store.version=1;
   while(store.version!=CONFIG_VERSION) _setupVersion();
+#ifdef HOSYOND_MIN_AUDIO_BUFFER
+  // Existing installations retain their EEPROM settings across firmware
+  // updates. Raise an older/smaller setting once so this build actually gets
+  // the larger Internet-radio cushion without requiring a factory reset.
+  if(store.abuff < HOSYOND_MIN_AUDIO_BUFFER) {
+    saveValue(&store.abuff, (uint16_t)HOSYOND_MIN_AUDIO_BUFFER);
+  }
+#endif
   BOOTLOG("CONFIG_VERSION\t%d", store.version);
   store.play_mode = store.play_mode & 0b11;
   if(store.play_mode>1) store.play_mode=PM_WEB;
