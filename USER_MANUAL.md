@@ -11,6 +11,11 @@ the onboard amplifier after a short PCM gap. It turns the amplifier back on
 only after several valid audio frames have arrived, reducing reconnect and
 buffer-underrun pops.
 
+The player footer uses readable text rather than private font symbols:
+`85% 3.92V` is the battery estimate, `VOL 120` is volume, and `WiFi 4` is
+wireless signal strength on a scale from 0 (weak/disconnected) to 4 (strong).
+The radio's IP address remains available in the web interface and serial log.
+
 The board already contains a mono SC8002B speaker amplifier. Audio leaves the
 ESP32 through its internal DAC on GPIO26, so an external MAX98357A or other
 I2S amplifier is not needed.

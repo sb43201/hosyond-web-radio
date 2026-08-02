@@ -567,6 +567,16 @@ void Display::loop() {
 
 void Display::_setRSSI(int rssi) {
   if(!_rssi) return;
+#if STATUS_TEXT_LABELS
+  int status_steps[] = {RSSI_STEPS};
+  uint8_t level = 0;
+  if (rssi >= status_steps[0]) level = 4;
+  else if (rssi >= status_steps[1]) level = 3;
+  else if (rssi >= status_steps[2]) level = 2;
+  else if (rssi >= status_steps[3]) level = 1;
+  _rssi->setText(level, rssiFmt);
+  return;
+#endif
 #if RSSI_DIGIT
   _rssi->setText(rssi, rssiFmt);
   return;

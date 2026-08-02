@@ -36,6 +36,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Automatic NTP time synchronization with EST/EDT daylight-saving changes
 - Wi-Fi setup access point for first startup
 - Station name, stream title, bitrate, clock, and signal display
+- Plain-language footer labels for battery, volume, and Wi-Fi strength
 - On-screen Li-ion battery percentage and voltage monitor
 - Optional FAT32 microSD playback
 - Backlight brightness control

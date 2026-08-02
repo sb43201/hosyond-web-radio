@@ -87,6 +87,10 @@
 #define BATTERY_ADC_SAMPLES 16
 #define BATTERY_PRESENT_MV 2500
 
+/* Use readable footer labels instead of yoRadio's private icon characters. */
+#define STATUS_TEXT_LABELS true
+#define HIDE_IP true
+
 /* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
 #define CJK_SUBSET_FONT true
 
