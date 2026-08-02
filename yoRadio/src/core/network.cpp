@@ -68,6 +68,9 @@ bool MyNetwork::wifiBegin(bool silent){
     //WiFi.disconnect(true, true); //disconnect & erase internal credentials https://github.com/e2002/yoradio/pull/164/commits/89d8b4450dde99cd7930b84bb14d81dab920b879
     //delay(100);
     WiFi.mode(WIFI_STA);
+    #ifdef WIFI_TX_POWER
+      WiFi.setTxPower(WIFI_TX_POWER);
+    #endif
     WiFi.begin(config.ssids[ls].ssid, config.ssids[ls].password);
     while (WiFi.status() != WL_CONNECTED) {
       if(!silent) Serial.print(".");
@@ -153,6 +156,9 @@ void MyNetwork::begin() {
 
 void MyNetwork::setWifiParams(){
   WiFi.setSleep(false);
+  #ifdef WIFI_TX_POWER
+    WiFi.setTxPower(WIFI_TX_POWER);
+  #endif
   WiFi.onEvent(WiFiReconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
   WiFi.onEvent(WiFiLostConnection, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
   //config.setTimeConf(); //??

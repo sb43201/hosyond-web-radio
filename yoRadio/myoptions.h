@@ -91,6 +91,9 @@
 #define STATUS_TEXT_LABELS true
 #define HIDE_IP true
 
+/* Maximum ESP32 2.4 GHz transmit power (19.5 dBm). */
+#define WIFI_TX_POWER WIFI_POWER_19_5dBm
+
 /* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
 #define CJK_SUBSET_FONT true
 

@@ -46,6 +46,7 @@ unnecessary digital switching on the unused channel.
 - Slow, readable weather ticker with simultaneous °F and °C temperatures
 - Current IP address included at the start of the weather ticker
 - Over-the-air firmware updates after initial USB installation
+- Maximum 19.5 dBm ESP32 Wi-Fi transmit power with modem sleep disabled
 
 ## Required hardware
 

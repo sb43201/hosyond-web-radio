@@ -17,6 +17,12 @@ wireless signal strength on a scale from 0 (weak/disconnected) to 4 (strong).
 The current IP address is shown at the beginning of the weather marquee and is
 also available in the web interface and serial log.
 
+The Hosyond profile uses the ESP32's maximum 19.5 dBm Wi-Fi transmit-power
+setting and disables modem sleep for steadier streaming. Higher transmit power
+can reduce battery runtime. The displayed `WiFi 0-4` value measures signal
+received from the router, so it may not increase even when transmissions from
+the radio become more reliable.
+
 The board already contains a mono SC8002B speaker amplifier. Audio leaves the
 ESP32 through its internal DAC on GPIO26, so an external MAX98357A or other
 I2S amplifier is not needed.
