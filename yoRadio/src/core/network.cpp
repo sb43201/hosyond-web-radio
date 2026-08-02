@@ -11,6 +11,7 @@
 #include "mqtt.h"
 #include "timekeeper.h"
 #include "../pluginsManager/pluginsManager.h"
+#include <esp_wifi.h>
 
 #ifndef WIFI_ATTEMPTS
   #define WIFI_ATTEMPTS  16
@@ -21,6 +22,46 @@
 #endif
 MyNetwork network;
 TaskHandle_t wifiReconnectTaskHandle = nullptr;
+
+bool beginStrongestAccessPoint(const char *ssid, const char *password) {
+#if WIFI_LOCK_STRONGEST_BSSID
+  const int16_t count = WiFi.scanNetworks(false, false, false, 300, 0, ssid);
+  int16_t strongest = -1;
+  int32_t strongestRssi = -1000;
+  for (int16_t index = 0; index < count; ++index) {
+    if (WiFi.SSID(index) == ssid && WiFi.RSSI(index) > strongestRssi) {
+      strongest = index;
+      strongestRssi = WiFi.RSSI(index);
+    }
+  }
+
+  if (strongest >= 0) {
+    uint8_t bssid[6];
+    memcpy(bssid, WiFi.BSSID(strongest), sizeof(bssid));
+    const int32_t channel = WiFi.channel(strongest);
+    Serial.printf("Locking WiFi to strongest Nest point %02X:%02X:%02X:%02X:%02X:%02X, channel %d, RSSI %d dBm\n",
+                  bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5],
+                  channel, strongestRssi);
+    WiFi.scanDelete();
+
+    // Configure the selected AP without connecting yet, then turn off the
+    // roaming features that can bounce a stationary ESP32 between mesh nodes.
+    WiFi.begin(ssid, password, channel, bssid, false);
+    wifi_config_t stationConfig;
+    if (esp_wifi_get_config(WIFI_IF_STA, &stationConfig) == ESP_OK) {
+      stationConfig.sta.rm_enabled = 0;
+      stationConfig.sta.btm_enabled = 0;
+      stationConfig.sta.mbo_enabled = 0;
+      esp_wifi_set_config(WIFI_IF_STA, &stationConfig);
+    }
+    esp_wifi_connect();
+    return true;
+  }
+  WiFi.scanDelete();
+#endif
+  WiFi.begin(ssid, password);
+  return false;
+}
 
 void retryWiFiConnection(void *parameter) {
   (void)parameter;
@@ -89,7 +130,7 @@ bool MyNetwork::wifiBegin(bool silent){
     #ifdef WIFI_TX_POWER
       WiFi.setTxPower(WIFI_TX_POWER);
     #endif
-    WiFi.begin(config.ssids[ls].ssid, config.ssids[ls].password);
+    beginStrongestAccessPoint(config.ssids[ls].ssid, config.ssids[ls].password);
     while (WiFi.status() != WL_CONNECTED) {
       if(!silent) Serial.print(".");
       delay(500);

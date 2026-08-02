@@ -29,6 +29,13 @@ startup it retries saved networks for roughly one minute before opening setup
 AP mode. The serial monitor prints the ESP32 disconnect reason number if the
 problem needs further diagnosis.
 
+For Google Nest and similar mesh networks, the firmware scans all access
+points advertising the saved SSID, locks the stationary radio to the strongest
+BSSID and channel, and disables 802.11k/v/MBO steering. The selected point,
+channel, and RSSI are printed in the serial monitor at connection time. If no
+matching point is found during the scan, normal SSID-based connection remains
+available as a fallback.
+
 The board already contains a mono SC8002B speaker amplifier. Audio leaves the
 ESP32 through its internal DAC on GPIO26, so an external MAX98357A or other
 I2S amplifier is not needed.

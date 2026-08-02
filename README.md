@@ -48,6 +48,7 @@ unnecessary digital switching on the unused channel.
 - Over-the-air firmware updates after initial USB installation
 - Maximum 19.5 dBm ESP32 Wi-Fi transmit power with modem sleep disabled
 - Persistent Wi-Fi reconnection with extended saved-network startup grace
+- Strongest-point BSSID locking for stable Google Nest mesh connections
 
 ## Required hardware
 

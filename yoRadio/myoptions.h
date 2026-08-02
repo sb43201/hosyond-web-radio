@@ -96,6 +96,7 @@
 #define WIFI_ATTEMPTS 40
 #define WIFI_STARTUP_CYCLES 3
 #define WIFI_RECONNECT_INTERVAL_MS 4000
+#define WIFI_LOCK_STRONGEST_BSSID true
 
 /* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
 #define CJK_SUBSET_FONT true
