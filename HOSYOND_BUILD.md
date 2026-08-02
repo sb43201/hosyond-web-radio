@@ -42,6 +42,19 @@ ground.
 | microSD SCK | 18 |
 | microSD MISO | 19 |
 | microSD MOSI | 23 |
+| Battery voltage monitor | 34 (built-in 100 kΩ/100 kΩ divider) |
+
+## Battery monitor
+
+The E32R35T schematic connects `BAT+` to ADC1 GPIO34 through an onboard
+100 kΩ/100 kΩ divider. No external divider or GPIO wiring is required. Connect
+only a protected single-cell 3.7 V Li-ion/Li-poly battery to the board battery
+connector, after verifying its polarity matches the board markings.
+
+The player footer shows the estimated charge and measured voltage, for example
+`85% 3.92V`. The percentage follows an approximate Li-ion discharge curve and
+can vary under speaker load. The TP4054 charge-status output is not routed to
+the ESP32, so the display does not claim whether the cell is charging.
 
 ## Build and upload
 

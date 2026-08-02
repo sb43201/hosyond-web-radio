@@ -77,6 +77,16 @@
 /* U.S. Eastern Time: EST (UTC-5), automatically changing to EDT (UTC-4). */
 #define TIMEZONE_TZ_RULE "EST5EDT,M3.2.0/2,M11.1.0/2"
 
+/*
+ * The E32R35T has a built-in 100k/100k BAT+ divider connected to GPIO34.
+ * GPIO34 is ADC1, so battery measurement remains available while Wi-Fi runs.
+ */
+#define BATTERY_ADC_PIN 34
+#define BATTERY_DIVIDER_NUMERATOR 2
+#define BATTERY_DIVIDER_DENOMINATOR 1
+#define BATTERY_ADC_SAMPLES 16
+#define BATTERY_PRESENT_MV 2500
+
 /* Compact Simplified/Traditional Chinese font generated from the bundled playlist. */
 #define CJK_SUBSET_FONT true
 

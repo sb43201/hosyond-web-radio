@@ -6,6 +6,7 @@
 #include "display.h"
 #include "player.h"
 #include "favorites.h"
+#include "battery.h"
 #include "network.h"
 #include "netserver.h"
 #include "timekeeper.h"
@@ -95,6 +96,7 @@ Display::~Display() {
   delete _title1;
   delete _title2;
   delete _plcurrent;
+  delete _battery;
 }
 
 void Display::init() {
@@ -199,6 +201,9 @@ void Display::_buildPager(){
   #ifndef HIDE_RSSI
     _rssi = new TextWidget(rssiConf, 20, false, config.theme.rssi, config.theme.background);
   #endif
+  #if BATTERY_ADC_PIN != 255 && DSP_MODEL==DSP_ST7796
+    _battery = new TextWidget(batteryConf, 16, false, config.theme.rssi, config.theme.background);
+  #endif
   _nums->init(numConf, 10, false, config.theme.digit, config.theme.background);
   #ifndef HIDE_WEATHER
     _weather = new ScrollWidget("\007", weatherConf, config.theme.weather, config.theme.background);
@@ -208,6 +213,7 @@ void Display::_buildPager(){
   if(_voltxt)   _footer->addWidget( _voltxt);
   if(_volip)    _footer->addWidget( _volip);
   if(_rssi)     _footer->addWidget( _rssi);
+  if(_battery)  _footer->addWidget( _battery);
   if(_heapbar)  _footer->addWidget( _heapbar);
   
   if(_metabackground) pages[PG_PLAYER]->addWidget( _metabackground);
@@ -304,6 +310,8 @@ void Display::_start() {
 
   if(_vuwidget) _vuwidget->lock();
   if(_rssi)     _setRSSI(WiFi.RSSI());
+  battery.begin();
+  _setBattery();
   #ifndef HIDE_IP
     if(_volip) _volip->setText(config.ipToStr(WiFi.localIP()), iptxtFmt);
   #endif
@@ -526,7 +534,11 @@ void Display::loop() {
           if(_mode == SDCHANGE) _nums->setText(request.payload, "%d");
           break;
         }
-        case DSPRSSI: if(_rssi){ _setRSSI(request.payload); } if (_heapbar && config.store.audioinfo) _heapbar->setValue(player.isRunning()?player.inBufferFilled():0); break;
+        case DSPRSSI:
+          if(_rssi) _setRSSI(request.payload);
+          _setBattery();
+          if (_heapbar && config.store.audioinfo) _heapbar->setValue(player.isRunning()?player.inBufferFilled():0);
+          break;
         case PSTART: _layoutChange(true);   break;
         case PSTOP:  _layoutChange(false);  break;
         case DSP_START: _start();  break;
@@ -567,6 +579,16 @@ void Display::_setRSSI(int rssi) {
   if(rssi >= rssi_steps[3] && rssi < rssi_steps[2]) strlcpy(rssiG, "\003\002", 3);
   if(rssi <  rssi_steps[3] || rssi >=  0) strlcpy(rssiG, "\001\002", 3);
   _rssi->setText(rssiG);
+}
+
+void Display::_setBattery() {
+#if BATTERY_ADC_PIN != 255
+  if (!_battery) return;
+  battery.update();
+  char text[16];
+  battery.format(text, sizeof(text));
+  _battery->setText(text);
+#endif
 }
 
 void Display::_station() {

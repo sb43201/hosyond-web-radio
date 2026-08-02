@@ -41,6 +41,7 @@ const FillConfig  heapbarConf     PROGMEM = {{ 0, DSP_HEIGHT-2, 0, WA_LEFT }, DS
 const WidgetConfig bootstrConf    PROGMEM = { 0, 243, 1, WA_CENTER };
 const WidgetConfig bitrateConf    PROGMEM = { 6, 62, 2, WA_RIGHT };
 const WidgetConfig voltxtConf     PROGMEM = { 0, DSP_HEIGHT-38, 2, WA_CENTER };
+const WidgetConfig batteryConf    PROGMEM = { 310, DSP_HEIGHT-38, 2, WA_LEFT };
 const WidgetConfig  iptxtConf     PROGMEM = { TFT_FRAMEWDT, DSP_HEIGHT-38, 2, WA_LEFT };
 const WidgetConfig   rssiConf     PROGMEM = { TFT_FRAMEWDT, DSP_HEIGHT-38-6, 3, WA_RIGHT };
 const WidgetConfig numConf        PROGMEM = { 0, 200, 0, WA_CENTER };
@@ -71,4 +72,3 @@ const MoveConfig   weatherMove    PROGMEM = { 8, 120, MAX_WIDTH };
 const MoveConfig   weatherMoveVU  PROGMEM = { 89, 120, MAX_WIDTH-89+TFT_FRAMEWDT };
 
 #endif
-

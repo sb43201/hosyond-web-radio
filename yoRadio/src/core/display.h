@@ -56,7 +56,7 @@ class Display {
     NumWidget *_nums;
     ClockWidget *_clock;
     Page *_boot;
-    TextWidget *_bootstring, *_volip, *_voltxt, *_rssi, *_bitrate;
+    TextWidget *_bootstring, *_volip, *_voltxt, *_rssi, *_bitrate, *_battery;
     bool _locked = false;
     uint8_t _bootStep;
     void _time(bool redraw = false);
@@ -73,6 +73,7 @@ class Display {
     void _bootScreen();
     void _layoutChange(bool played);
     void _setRSSI(int rssi);
+    void _setBattery();
 };
 
 #else

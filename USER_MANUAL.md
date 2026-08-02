@@ -19,6 +19,8 @@ I2S amplifier is not needed.
 - Passive speaker with a matching 1.25 mm 2-pin plug
 - 2.4 GHz Wi-Fi network with internet access
 - Optional FAT32 microSD card
+- Optional protected single-cell 3.7 V Li-ion/Li-poly battery with matching
+  connector polarity
 
 Use a stable 5 V USB supply. A supply rated for at least 1 A is recommended;
 2 A provides useful margin at higher speaker volume and while charging a
@@ -457,19 +459,40 @@ Then press `RESET` and clear or refresh the browser cache.
 | SC8002B shutdown | GPIO4, active high shutdown |
 | microSD | VSPI: GPIO18/23/19, CS5 |
 | I2C connector | SDA32, SCL25 |
+| Battery monitor | ADC1 GPIO34 through onboard 100 kΩ/100 kΩ divider |
 
-## 15. Safety and care
+## 15. Battery monitor
+
+The E32R35T already contains the battery-measurement divider. Connect the
+battery only to the board's battery socket; do not connect battery voltage
+directly to an ESP32 pin. The firmware reads the divided voltage on ADC1
+GPIO34, averages it, and displays an estimated percentage and voltage in the
+player footer, such as `85% 3.92V`.
+
+The percentage is an estimate based on a typical single-cell Li-ion discharge
+curve. It may fall temporarily at loud volume and rise again when the load is
+removed. The board does not route the charger status output to the ESP32, so
+the monitor cannot reliably indicate whether charging is active. When no
+battery is detected, the battery text is hidden.
+
+If a multimeter shows a consistent voltage difference, adjust
+`BATTERY_DIVIDER_NUMERATOR` and `BATTERY_DIVIDER_DENOMINATOR` in
+`yoRadio/myoptions.h`; the schematic's nominal 100 kΩ/100 kΩ divider uses
+`2/1`.
+
+## 16. Safety and care
 
 - Disconnect power before changing speaker or battery connections.
 - Observe battery polarity exactly as marked.
-- Use only a suitable 3.7 V lithium-polymer battery on the battery connector.
+- Use only a protected single-cell 3.7 V lithium-ion or lithium-polymer battery
+  on the battery connector; verify polarity before connecting it.
 - Do not short `SP+` or `SP-` to ground.
 - Do not press the resistive screen with sharp or hard objects.
 - Keep the board away from conductive surfaces and liquids.
 - Provide ventilation when operating at high speaker volume or charging a
   battery.
 
-## 16. Software information
+## 17. Software information
 
 This firmware is based on
 [e2002/yoRadio](https://github.com/e2002/yoradio). The Hosyond-specific settings

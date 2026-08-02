@@ -35,6 +35,7 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Automatic NTP time synchronization with EST/EDT daylight-saving changes
 - Wi-Fi setup access point for first startup
 - Station name, stream title, bitrate, clock, and signal display
+- On-screen Li-ion battery percentage and voltage monitor
 - Optional FAT32 microSD playback
 - Backlight brightness control
 - Slow, readable weather ticker with simultaneous °F and °C temperatures
@@ -48,6 +49,8 @@ the onboard SC8002B amplifier. Connect a passive speaker to the board's
 - Passive speaker with a 1.25 mm 2-pin plug
   - An 8 ohm, 1 W speaker is a conservative starting choice
 - Optional FAT32 microSD card
+- Optional protected single-cell 3.7 V Li-ion/Li-poly battery with the correct
+  connector polarity
 
 ## Quick start
 
