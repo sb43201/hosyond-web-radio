@@ -86,12 +86,12 @@ void Config::init() {
   }
   if(store.version>CONFIG_VERSION) store.version=1;
   while(store.version!=CONFIG_VERSION) _setupVersion();
-#ifdef HOSYOND_MIN_AUDIO_BUFFER
+#ifdef HOSYOND_AUDIO_BUFFER
   // Existing installations retain their EEPROM settings across firmware
-  // updates. Raise an older/smaller setting once so this build actually gets
-  // the larger Internet-radio cushion without requiring a factory reset.
-  if(store.abuff < HOSYOND_MIN_AUDIO_BUFFER) {
-    saveValue(&store.abuff, (uint16_t)HOSYOND_MIN_AUDIO_BUFFER);
+  // updates. Apply this board's tested balance between stream cushioning and
+  // decoder heap without requiring a factory reset.
+  if(store.abuff != HOSYOND_AUDIO_BUFFER) {
+    saveValue(&store.abuff, (uint16_t)HOSYOND_AUDIO_BUFFER);
   }
 #endif
   BOOTLOG("CONFIG_VERSION\t%d", store.version);
