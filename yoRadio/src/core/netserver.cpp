@@ -329,7 +329,9 @@ void NetServer::loop() {
     ESP.restart();
   }
   processQueue();
-  websocket.cleanupClients();
+  // This ESP32 has no PSRAM. Keep only the newest browser session so stale
+  // tabs cannot retain WebSocket queues needed by SSL and audio decoders.
+  websocket.cleanupClients(1);
   switch (importRequest) {
     case IMPL:    importPlaylist();  importRequest = IMDONE; break;
     case IMWIFI:  config.saveWifi(); importRequest = IMDONE; break;

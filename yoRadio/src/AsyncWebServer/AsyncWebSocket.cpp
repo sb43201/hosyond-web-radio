@@ -946,7 +946,9 @@ void AsyncWebSocket::pingAll(uint8_t *data, size_t len){
 
 void AsyncWebSocket::text(uint32_t id, const char * message, size_t len){
   AsyncWebSocketClient * c = client(id);
-  if(c)
+  // UI status is transient. If a slow browser has filled its queue, discard
+  // the update instead of consuming audio/SSL heap with more queued copies.
+  if(c && c->canSend())
     c->text(message, len);
 }
 
@@ -954,7 +956,7 @@ void AsyncWebSocket::textAll(AsyncWebSocketMessageBuffer * buffer){
   if (!buffer) return;
   buffer->lock(); 
   for(const auto& c: _clients){
-    if(c->status() == WS_CONNECTED){
+    if(c->status() == WS_CONNECTED && c->canSend()){
         c->text(buffer);
     }
   }
